@@ -5,6 +5,7 @@ from loguru import logger
 
 import filters
 import handlers
+import middlewares
 from data import config
 
 bot = Bot(token=config.BOT_TOKEN, parse_mode=types.ParseMode.HTML)
@@ -15,6 +16,7 @@ dp = Dispatcher(bot, storage=storage)
 # noinspection PyUnusedLocal
 async def on_startup(web_app: web.Application):
     filters.setup(dp)
+    middlewares.setup(dp)
     handlers.user.setup(dp)
     await dp.bot.delete_webhook()
     await dp.bot.set_webhook(config.WEBHOOK_URL)
