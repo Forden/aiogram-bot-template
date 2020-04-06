@@ -127,3 +127,14 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.idea/$CACHE_FILE$
+.idea/.gitignore
+.idea/aiogram-bot-template.iml
+.idea/codeStyles/
+.idea/deployment.xml
+.idea/dictionaries
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/vagrant.xml
+.idea/vcs.xml

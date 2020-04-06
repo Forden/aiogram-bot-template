@@ -17,6 +17,7 @@ dp = Dispatcher(bot, storage=storage)
 async def on_startup(web_app: web.Application):
     filters.setup(dp)
     middlewares.setup(dp)
+    handlers.errors.setup(dp)
     handlers.user.setup(dp)
     await dp.bot.delete_webhook()
     await dp.bot.set_webhook(config.WEBHOOK_URL)
@@ -37,5 +38,5 @@ async def execute(req: web.Request) -> web.Response:
 if __name__ == '__main__':
     app = web.Application()
     app.on_startup.append(on_startup)
-    app.add_routes([web.post('/webhook/{token}', execute)])
+    app.add_routes([web.post(config.WEBHOOK_PATH, execute)])
     web.run_app(app, port=5151, host='localhost')

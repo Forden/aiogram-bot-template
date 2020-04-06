@@ -1,5 +1,7 @@
 BOT_TOKEN = ''
-WEBHOOK_URL = ''
+BASE_URL = 'https://example.com'  # Webhook domain
+WEBHOOK_PATH = f'/webhook/bot/{BOT_TOKEN}'
+WEBHOOK_URL = f'{BASE_URL}{WEBHOOK_PATH}'
 
 admins = []
 
