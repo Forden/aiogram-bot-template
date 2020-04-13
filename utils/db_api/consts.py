@@ -5,16 +5,10 @@ import aiomysql
 
 from data import config
 
-connection_pool = None
-mainloop = asyncio.get_event_loop()
-
-
-async def main(loop):
-    global connection_pool
-    connection_pool = await aiomysql.create_pool(**config.mysql_info, loop=loop)
-
 
 class RawConnection:
+    connection_pool = None
+
     @staticmethod
     async def _make_request(
             sql: str,
@@ -23,8 +17,9 @@ class RawConnection:
             mult: bool = False,
             retries_count: int = 5
     ) -> Optional[Union[List[Dict[str, Any]], Dict[str, Any]]]:
-        global connection_pool
-        async with connection_pool.acquire() as conn:
+        if RawConnection.connection_pool is None:
+            RawConnection.connection_pool = await aiomysql.create_pool(**config.mysql_info)
+        async with RawConnection.connection_pool.acquire() as conn:
             conn: aiomysql.Connection = conn
             async with conn.cursor(aiomysql.DictCursor) as cur:
                 cur: aiomysql.DictCursor = cur
@@ -50,6 +45,3 @@ class RawConnection:
                     return r
                 else:
                     await conn.commit()
-
-
-mainloop.run_until_complete(main(mainloop))
