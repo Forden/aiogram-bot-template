@@ -1,15 +1,44 @@
-from typing import List
+from typing import Dict, List, Union
 
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import KeyboardButton, KeyboardButtonPollType, ReplyKeyboardMarkup
 
-from . import utils
+from ..keyboard_utils import schema_generator
 
 
 class DefaultConstructor:
+    aliases = {
+        'contact':  'request_contact',
+        'location': 'request_location',
+        'poll':     'request_poll'
+    }
+    available_properities = ['text', 'request_contact', 'request_location', 'request_poll']
+    properties_amount = 2
+
     @staticmethod
-    def _create_kb(actions: List[str], schema: List[int]) -> ReplyKeyboardMarkup:
+    def _create_kb(
+            actions: List[Union[str, Dict[str, Union[str, bool, KeyboardButtonPollType]]]],
+            schema: List[int]
+    ) -> ReplyKeyboardMarkup:
+        kb = ReplyKeyboardMarkup()
+        kb.row_width = max(schema)
         btns = []
+        # noinspection DuplicatedCode
         for a in actions:
-            btns.append(KeyboardButton(a))
-        kb = utils.misc.arrange_default_schema(btns, schema)
+            if isinstance(a, str):
+                a = {'text': a}
+            data: Dict[str, Union[str, bool, KeyboardButtonPollType]] = {}
+            for k, v in DefaultConstructor.aliases.items():
+                if k in a:
+                    a[v] = a[k]
+                    del a[k]
+            for k in a:
+                if k in DefaultConstructor.available_properities:
+                    if len(data) < DefaultConstructor.properties_amount:
+                        data[k] = a[k]
+                    else:
+                        break
+            if len(data) != DefaultConstructor.properties_amount:
+                raise ValueError('Недостаточно данных для создания кнопки')
+            btns.append(KeyboardButton(**data))
+        kb.keyboard = schema_generator.create_keyboard_layout(btns, schema)
         return kb
