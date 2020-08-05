@@ -1,42 +1,52 @@
-from aiogram import Bot, Dispatcher, types
+from typing import List
+
+from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
+from aiogram.types import ParseMode
 from aiohttp import web
 from loguru import logger
 
-import filters
-import handlers
-import middlewares
 from data import config
-
-bot = Bot(token=config.BOT_TOKEN, parse_mode=types.ParseMode.HTML)
-storage = RedisStorage2(**config.aiogram_redis)
-dp = Dispatcher(bot, storage=storage)
 
 
 # noinspection PyUnusedLocal
-async def on_startup(web_app: web.Application):
-    filters.setup(dp)
+async def on_startup(app: web.Application):
+    import middlewares, filters
+    import handlers
     middlewares.setup(dp)
+    filters.setup(dp)
     handlers.errors.setup(dp)
     handlers.user.setup(dp)
-    await dp.bot.delete_webhook()
+    logger.info('Configure Webhook URL to: {url}', url=config.WEBHOOK_URL)
     await dp.bot.set_webhook(config.WEBHOOK_URL)
 
 
-async def execute(req: web.Request) -> web.Response:
-    upds = [types.Update(**(await req.json()))]
-    Bot.set_current(dp.bot)
-    Dispatcher.set_current(dp)
-    try:
-        await dp.process_updates(upds)
-    except Exception as e:
-        logger.error(e)
-    finally:
-        return web.Response()
+async def on_shutdown(app: web.Application):
+    app_bot: Bot = app['bot']
+    await app_bot.close()
+
+
+async def init() -> web.Application:
+    from utils.misc import logging
+    import web_handlers
+    logging.setup()
+    app = web.Application()
+    subapps: List[str, web.Application] = [
+        ('/health/', web_handlers.health_app),
+        ('/tg/webhooks', web_handlers.tg_updates_app),
+    ]
+    for prefix, subapp in subapps:
+        subapp['bot'] = bot
+        subapp['dp'] = dp
+        app.add_subapp(prefix, subapp)
+    app.on_startup.append(on_startup)
+    app.on_shutdown.append(on_shutdown)
+    return app
 
 
 if __name__ == '__main__':
-    app = web.Application()
-    app.on_startup.append(on_startup)
-    app.add_routes([web.post(config.WEBHOOK_PATH, execute)])
-    web.run_app(app, port=5151, host='localhost')
+    bot = Bot(config.BOT_TOKEN, parse_mode=ParseMode.HTML, validate_token=True)
+    storage = RedisStorage2(**config.aiogram_redis)
+    dp = Dispatcher(bot, storage=storage)
+
+    web.run_app(init())
