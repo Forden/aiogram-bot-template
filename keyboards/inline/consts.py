@@ -11,7 +11,7 @@ class InlineConstructor:
         'cb': 'callback_data'
     }
     available_properities = [
-        'text', 'callback_data', 'login_url', 'switch_inline_query', 'switch_inline_query_current_chat',
+        'text', 'callback_data', 'url', 'login_url', 'switch_inline_query', 'switch_inline_query_current_chat',
         'callback_game', 'pay'
     ]
     properties_amount = 2
