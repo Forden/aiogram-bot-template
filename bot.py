@@ -11,7 +11,8 @@ from data import config
 
 # noinspection PyUnusedLocal
 async def on_startup(app: web.Application):
-    import middlewares, filters
+    import middlewares
+    import filters
     import handlers
     middlewares.setup(dp)
     filters.setup(dp)
@@ -46,7 +47,7 @@ async def init() -> web.Application:
 
 if __name__ == '__main__':
     bot = Bot(config.BOT_TOKEN, parse_mode=ParseMode.HTML, validate_token=True)
-    storage = RedisStorage2(**config.aiogram_redis)
+    storage = RedisStorage2(**config.redis)
     dp = Dispatcher(bot, storage=storage)
 
     web.run_app(init())
