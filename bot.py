@@ -1,5 +1,6 @@
 from typing import List
 
+import aiojobs as aiojobs
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from aiogram.types import ParseMode
@@ -31,6 +32,7 @@ async def init() -> web.Application:
     from utils.misc import logging
     import web_handlers
     logging.setup()
+    scheduler = await aiojobs.create_scheduler()
     app = web.Application()
     subapps: List[str, web.Application] = [
         ('/health/', web_handlers.health_app),
@@ -39,6 +41,7 @@ async def init() -> web.Application:
     for prefix, subapp in subapps:
         subapp['bot'] = bot
         subapp['dp'] = dp
+        subapp['scheduler'] = scheduler
         app.add_subapp(prefix, subapp)
     app.on_startup.append(on_startup)
     app.on_shutdown.append(on_shutdown)
