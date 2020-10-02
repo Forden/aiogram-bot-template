@@ -36,7 +36,7 @@ async def init() -> web.Application:
     app = web.Application()
     subapps: List[str, web.Application] = [
         ('/health/', web_handlers.health_app),
-        ('/tg/webhooks', web_handlers.tg_updates_app),
+        ('/tg/webhooks/', web_handlers.tg_updates_app),
     ]
     for prefix, subapp in subapps:
         subapp['bot'] = bot

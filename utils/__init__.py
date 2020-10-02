@@ -1,3 +1,2 @@
-from . import db_api
 from . import misc
-from . import redis
+from .db import db_api, redis

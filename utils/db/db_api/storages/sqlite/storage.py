@@ -7,7 +7,7 @@ from loguru import logger
 from ..basestorage.storage import RawConnection
 
 T = TypeVar("T")
-db_title = Path(__file__).parent.parent.parent.parent.parent / 'data' / 'db.db' # db file supposed to be in data folder
+db_title = Path(__file__).parent.parent.parent.parent.parent / 'data' / 'db.db'  # db file supposed to be in data folder
 
 
 class SqliteDBConn:

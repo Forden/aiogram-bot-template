@@ -16,4 +16,4 @@ async def execute(req: web.Request) -> web.Response:
     return web.Response()
 
 
-tg_updates_app.add_routes([web.post('/{token}', execute)])
+tg_updates_app.add_routes([web.post('/bot/{token}', execute)])
