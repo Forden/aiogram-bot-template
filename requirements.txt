@@ -1,5 +1,5 @@
 aiogram==2.9.2
-aiohttp==3.6.2
+aiohttp==3.7.4
 aiomysql==0.0.20
 aiohttp_healthcheck==1.3.1
 aioredis==1.3.1
