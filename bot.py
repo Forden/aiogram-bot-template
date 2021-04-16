@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import aiojobs as aiojobs
 from aiogram import Bot, Dispatcher
@@ -34,7 +34,7 @@ async def init() -> web.Application:
     logging.setup()
     scheduler = await aiojobs.create_scheduler()
     app = web.Application()
-    subapps: List[str, web.Application] = [
+    subapps: List[Tuple[str, web.Application]] = [
         ('/tg/webhooks/', web_handlers.tg_updates_app),
     ]
     for prefix, subapp in subapps:
