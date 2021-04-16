@@ -35,7 +35,6 @@ async def init() -> web.Application:
     scheduler = await aiojobs.create_scheduler()
     app = web.Application()
     subapps: List[str, web.Application] = [
-        ('/health/', web_handlers.health_app),
         ('/tg/webhooks/', web_handlers.tg_updates_app),
     ]
     for prefix, subapp in subapps:
