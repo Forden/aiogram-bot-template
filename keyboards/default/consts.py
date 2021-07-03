@@ -12,7 +12,7 @@ class DefaultConstructor:
         'poll':     'request_poll'
     }
     available_properities = ['text', 'request_contact', 'request_location', 'request_poll']
-    properties_amount = 2
+    properties_amount = 1
 
     @staticmethod
     def _create_kb(
