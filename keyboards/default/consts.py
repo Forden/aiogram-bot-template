@@ -17,9 +17,14 @@ class DefaultConstructor:
     @staticmethod
     def _create_kb(
             actions: List[Union[str, Dict[str, Union[str, bool, KeyboardButtonPollType]]]],
-            schema: List[int]
+            schema: List[int],
+            resize_keyboard: bool = True,
+            selective: bool = False,
+            one_time_keyboard: bool = False
     ) -> ReplyKeyboardMarkup:
-        kb = ReplyKeyboardMarkup()
+        kb = ReplyKeyboardMarkup(
+            resize_keyboard=resize_keyboard, selective=selective, one_time_keyboard=one_time_keyboard
+        )
         kb.row_width = max(schema)
         btns = []
         # noinspection DuplicatedCode
