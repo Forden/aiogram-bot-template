@@ -26,3 +26,11 @@ redis = {
     'host':     ip['redis'],
     'password': ''
 }
+
+mongo = {
+    'hostname':  '127.0.0.1',
+    'password': 'root',
+    'username':  'example',
+    'port': 27017,
+    'database': 'telegram_bot'
+}
