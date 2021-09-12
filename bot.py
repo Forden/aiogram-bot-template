@@ -49,5 +49,4 @@ async def init() -> web.Application:
 if __name__ == '__main__':
     bot = Bot(config.BOT_TOKEN, parse_mode=ParseMode.HTML, validate_token=True)
     dp = Dispatcher(bot)
-
     web.run_app(init(), port=config.PORT)
