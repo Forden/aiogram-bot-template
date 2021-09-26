@@ -1,4 +1,11 @@
 services:
+  telegam_bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        token_setter:
+
   mongo:
     image: mongo
     restart: always
