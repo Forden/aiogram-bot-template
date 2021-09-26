@@ -10,7 +10,7 @@ LOGS_BASE_PATH = str(Path(__file__).parent.parent / 'logs')
 admins = []
 
 mongo = {
-    'hostname':  '127.0.0.1',
+    'hostname':  'host.docker.internal',
     'password': 'root',
     'username':  'example',
     'port': 27017,
