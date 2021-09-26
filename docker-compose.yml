@@ -6,7 +6,6 @@ services:
       args:
         token_setter:
 
-
   mongo:
     image: mongo
     restart: always

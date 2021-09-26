@@ -8,7 +8,7 @@ from loguru import logger
 from pyngrok import ngrok
 from data import config
 
-WEBHOOK_HOST = ngrok.connect(8877, bind_tls=True).public_url
+WEBHOOK_HOST = ngrok.connect(config.PORT, bind_tls=True).public_url
 WEBHOOK_URL = f"{WEBHOOK_HOST}{config.WEBHOOK_PATH}"
 
 # noinspection PyUnusedLocal
