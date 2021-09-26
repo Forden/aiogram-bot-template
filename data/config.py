@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 PORT = 8877
-BOT_TOKEN = os.environ["BOT-API-KEY"]
+BOT_TOKEN = os.environ["bot_token"]
 WEBHOOK_PATH = f'/tg/webhooks/bot/{BOT_TOKEN}'
 
 LOGS_BASE_PATH = str(Path(__file__).parent.parent / 'logs')
