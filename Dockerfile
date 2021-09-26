@@ -2,7 +2,8 @@ FROM python:3.7-slim
 
 WORKDIR /botname
 
-ENV bot_token="do not post your token here"
+ARG token_setter
+ENV bot_token=$token_setter
 COPY requirements.txt /botname/
 RUN pip install -r /botname/requirements.txt
 COPY . /botname/
