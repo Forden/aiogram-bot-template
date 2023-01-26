@@ -37,7 +37,8 @@ async def on_shutdown(app: web.Application):
 
 async def init() -> web.Application:
     import web_handlers
-    scheduler = await aiojobs.create_scheduler()
+    await create_db_connections(dp)
+    scheduler = aiojobs.Scheduler()
     app = web.Application()
     subapps: List[Tuple[str, web.Application]] = [
         ('/tg/webhooks/', web_handlers.tg_updates_app),
@@ -57,7 +58,7 @@ async def init() -> web.Application:
 
 if __name__ == '__main__':
     bot = Bot(config.BOT_TOKEN, parse_mode=ParseMode.HTML, validate_token=True)
-    storage = RedisStorage2(**config.redis)
+    storage = RedisStorage2(**config.REDIS_CREDS)
     dp = Dispatcher(bot, storage=storage)
 
     web.run_app(init())
