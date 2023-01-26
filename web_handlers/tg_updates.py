@@ -1,3 +1,4 @@
+import aiojobs
 from aiogram import Bot, Dispatcher, types
 from aiohttp import web
 
@@ -12,7 +13,8 @@ async def proceed_update(req: web.Request):
 
 
 async def execute(req: web.Request) -> web.Response:
-    await req.app['scheduler'].spawn(proceed_update(req))
+    scheduler: aiojobs.Scheduler = req.app['scheduler']
+    await scheduler.spawn(proceed_update(req))
     return web.Response()
 
 

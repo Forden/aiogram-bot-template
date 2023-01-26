@@ -9,21 +9,15 @@ LOGS_BASE_PATH = str(Path(__file__).parent.parent / 'logs')
 
 admins = []
 
-ip = {
-    'db':    '',
-    'redis': '',
-}
-
-mysql_info = {
-    'host':     ip['db'],
+POSTGRES_CREDS = {
+    'host':     '',
     'user':     '',
     'password': '',
-    'db':       '',
-    'maxsize':  5,
-    'port':     3306,
+    'database': '',
+    'port':     5432,
 }
 
-redis = {
-    'host':     ip['redis'],
+REDIS_CREDS = {
+    'host':     '',
     'password': ''
 }

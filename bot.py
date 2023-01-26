@@ -1,17 +1,24 @@
+import logging
 from typing import List, Tuple
 
 import aiojobs as aiojobs
-from aiogram import Bot, Dispatcher
+import asyncpg
+from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from aiogram.types import ParseMode
 from aiohttp import web
-from loguru import logger
 
 from data import config
 
 
+async def create_db_connections(dp: Dispatcher):
+    db_pool = await asyncpg.create_pool(**config.POSTGRES_CREDS, min_size=1, max_size=3)
+    dp['pg_pool'] = db_pool
+
+
 # noinspection PyUnusedLocal
 async def on_startup(app: web.Application):
+    logger = logging.getLogger('bot')
     import middlewares
     import filters
     import handlers
@@ -19,8 +26,8 @@ async def on_startup(app: web.Application):
     filters.setup(dp)
     handlers.errors.setup(dp)
     handlers.user.setup(dp)
-    logger.info('Configure Webhook URL to: {url}', url=config.WEBHOOK_URL)
-    await dp.bot.set_webhook(config.WEBHOOK_URL)
+    logger.info(f'Configure Webhook URL to: {config.WEBHOOK_URL}')
+    await dp.bot.set_webhook(config.WEBHOOK_URL, allowed_updates=types.AllowedUpdates.all())
 
 
 async def on_shutdown(app: web.Application):
@@ -29,9 +36,7 @@ async def on_shutdown(app: web.Application):
 
 
 async def init() -> web.Application:
-    from utils.misc import logging
     import web_handlers
-    logging.setup()
     scheduler = await aiojobs.create_scheduler()
     app = web.Application()
     subapps: List[Tuple[str, web.Application]] = [
@@ -42,6 +47,9 @@ async def init() -> web.Application:
         subapp['dp'] = dp
         subapp['scheduler'] = scheduler
         app.add_subapp(prefix, subapp)
+    app['bot'] = bot
+    app['dp'] = dp
+    app['scheduler'] = scheduler
     app.on_startup.append(on_startup)
     app.on_shutdown.append(on_shutdown)
     return app
