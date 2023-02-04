@@ -20,10 +20,12 @@ class DefaultConstructor:
             schema: List[int],
             resize_keyboard: bool = True,
             selective: bool = False,
-            one_time_keyboard: bool = False
+            one_time_keyboard: bool = False,
+            is_persistent: bool = True
     ) -> ReplyKeyboardMarkup:
         kb = ReplyKeyboardMarkup(
-            resize_keyboard=resize_keyboard, selective=selective, one_time_keyboard=one_time_keyboard
+            resize_keyboard=resize_keyboard, selective=selective, one_time_keyboard=one_time_keyboard,
+            is_persistent=is_persistent
         )
         kb.row_width = max(schema)
         btns = []

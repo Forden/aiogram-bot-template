@@ -1,4 +1,4 @@
-aiogram==2.24
+aiogram==2.25
 aiohttp==3.8.3
 aioredis==2.0.1
 aiojobs==1.1.0
