@@ -1,4 +1,3 @@
-import logging
 from typing import List, Tuple
 
 import aiojobs as aiojobs
@@ -9,6 +8,7 @@ from aiogram.types import ParseMode
 from aiohttp import web
 
 from data import config
+from utils import misc
 
 
 async def create_db_connections(dp: Dispatcher):
@@ -16,9 +16,15 @@ async def create_db_connections(dp: Dispatcher):
     dp['pg_pool'] = db_pool
 
 
-# noinspection PyUnusedLocal
+def setup_logging(dp: Dispatcher):
+    dp['business_logger'] = misc.setup_logger()
+    dp['business_logger_init'] = {'type': 'business'}
+    dp['aiogram_logger'] = misc.setup_logger()
+    dp['aiogram_logger_init'] = {'type': 'aiogram'}
+
+
 async def on_startup(app: web.Application):
-    logger = logging.getLogger('bot')
+    dp = app['dp']
     import middlewares
     import filters
     import handlers
@@ -26,7 +32,8 @@ async def on_startup(app: web.Application):
     filters.setup(dp)
     handlers.errors.setup(dp)
     handlers.user.setup(dp)
-    logger.info(f'Configure Webhook URL to: {config.WEBHOOK_URL}')
+    webhook_logger = dp['aiogram_logger'].bind(webhook_url=config.WEBHOOK_URL)
+    webhook_logger.info('Configured webhook')
     await dp.bot.set_webhook(config.WEBHOOK_URL, allowed_updates=types.AllowedUpdates.all())
 
 
@@ -35,8 +42,9 @@ async def on_shutdown(app: web.Application):
     await app_bot.close()
 
 
-async def init() -> web.Application:
+async def init(bot: Bot, dp: Dispatcher) -> web.Application:
     import web_handlers
+    setup_logging(dp)
     await create_db_connections(dp)
     scheduler = aiojobs.Scheduler()
     app = web.Application()
@@ -61,4 +69,4 @@ if __name__ == '__main__':
     storage = RedisStorage2(**config.REDIS_CREDS)
     dp = Dispatcher(bot, storage=storage)
 
-    web.run_app(init())
+    web.run_app(init(bot, dp), host='localhost', port=5005)

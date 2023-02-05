@@ -37,7 +37,7 @@ class BasicButtons(DefaultConstructor):
     @staticmethod
     def skip(add_back: bool = False, add_cancel: bool = False):
         schema = [1]
-        btns = ['Пропустить']
+        btns = ['▶️Пропустить']
         if add_back:
             schema.append(1)
             btns.append('◀️Назад')

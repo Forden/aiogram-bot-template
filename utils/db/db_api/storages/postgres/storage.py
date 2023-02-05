@@ -1,20 +1,21 @@
-import logging
 from typing import List, Optional, Type, TypeVar, Union
 
 import asyncpg
-import orjson
+import structlog
 
-import models.base
 from ..basestorage.storage import RawConnection
 
 T = TypeVar("T")
 
 
 class PostgresConnection(RawConnection):
-    def __init__(self, connection_poll: asyncpg.Pool):
+    def __init__(
+            self, connection_poll: asyncpg.Pool, logger: structlog.typing.FilteringBoundLogger, logger_init_values: dict
+    ):
         self._pool = connection_poll
 
-        self._logger = logging.getLogger('db_connection')
+        self._logger = logger
+        self._logger_init_values = logger_init_values
 
     async def __make_request(
             self,
@@ -23,6 +24,9 @@ class PostgresConnection(RawConnection):
             fetch: bool = False,
             mult: bool = False
     ) -> Optional[Union[List[asyncpg.Record], asyncpg.Record]]:
+        self._logger = self._logger.new(**self._logger_init_values)
+        self._logger = self._logger.bind(sql=sql, params=params)
+        self._logger.debug('Making query to DB')
         async with self._pool.acquire() as con:
             con: asyncpg.Connection
             try:
@@ -48,9 +52,10 @@ class PostgresConnection(RawConnection):
                     else:
                         await con.execute(sql)
             except Exception as e:
-                self._logger.error(
-                    f'error [ {e} ] in query [ {sql} ] with params [ {params} ]'
-                )  # change to appropriate error handling
+                # change to appropriate error handling
+                self._logger = self._logger.bind(error=e)
+                self._logger.error(e)
+                self._logger = self._logger.unbind('error')
 
     async def _make_request(
             self,

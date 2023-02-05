@@ -11,7 +11,9 @@ class DefaultConstructor:
         'location': 'request_location',
         'poll':     'request_poll'
     }
-    available_properities = ['text', 'request_contact', 'request_location', 'request_poll']
+    available_properities = [
+        'text', 'request_contact', 'request_location', 'request_poll', 'request_user', 'request_chat', 'web_app'
+    ]
     properties_amount = 1
 
     @staticmethod
