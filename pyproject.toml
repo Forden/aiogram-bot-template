@@ -1,0 +1,54 @@
+[tool.ruff]
+select = ["E", "F", "B"]
+ignore = ["E501"]
+unfixable = ["B"]
+target-version = "py310"
+ignore-init-module-imports = true
+
+
+[tool.black]
+target-version = ["py310"]
+
+
+[tool.mypy]
+python_version = "3.10"
+files = "bot.py"
+
+[[tool.mypy.overrides]]
+module = "asyncpg.*"
+ignore_missing_imports = true
+
+
+[tool.poetry]
+name = "aiogram-bot-template"
+version = "2.0.0"
+description = "Template for creating scalable bots with aiogram"
+authors = ["Forden <24463229+Forden@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "aiogram_bot_template"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+environs = "^9.5.0"
+aiohttp = "^3.8.4"
+aiojobs = "^1.1.0"
+aiogram = "3.0.0b7"
+asyncpg = "^0.27.0"
+redis = "^4.5.5"
+orjson = "^3.8.12"
+structlog = "^23.1.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.3.0"
+black = {extras = ["d"], version = "^23.3.0"}
+ruff = "^0.0.267"
+types-redis = "^4.5.5.2"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 .idea/
-config.py
+.ruff_cache/
+.vscode/

@@ -1,4 +1,6 @@
-import orjson as orjson
+import uuid
+
+import orjson
 import pydantic
 
 
@@ -11,3 +13,5 @@ class BaseModel(pydantic.BaseModel):
     class Config:
         json_loads = orjson.loads
         json_dumps = orjson_dumps
+
+        json_encoders = {uuid.UUID: lambda x: f"{x}"}
