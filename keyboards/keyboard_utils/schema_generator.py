@@ -1,17 +1,16 @@
-from typing import List, Union
+from typing import Sequence, TypeVar
 
-from aiogram.types import InlineKeyboardButton, KeyboardButton
+T = TypeVar("T")
 
 
-def create_keyboard_layout(
-        buttons: List[Union[InlineKeyboardButton, KeyboardButton]],
-        count: List[int]
-) -> List[List[Union[InlineKeyboardButton, KeyboardButton]]]:
+def create_keyboard_layout(buttons: Sequence[T], count: Sequence[int]) -> list[list[T]]:
     if sum(count) != len(buttons):
-        raise ValueError('Количество кнопок не совпадает со схемой')
-    tmplist = []
+        raise ValueError("Количество кнопок не совпадает со схемой")
+    tmplist: list[list[T]] = []
+    btn_number = 0
     for a in count:
         tmplist.append([])
         for _ in range(a):
-            tmplist[-1].append(buttons.pop(0))
+            tmplist[-1].append(buttons[btn_number])
+            btn_number += 1
     return tmplist

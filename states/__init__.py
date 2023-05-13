@@ -1,1 +1,1 @@
-from . import admin, user
+from . import user as user
