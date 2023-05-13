@@ -12,7 +12,9 @@ def setup_logger() -> structlog.typing.FilteringBoundLogger:
         level=config.LOGGING_LEVEL,
         stream=sys.stdout,
     )
-    log: structlog.typing.FilteringBoundLogger = structlog.get_logger(wrapper_class=structlog.stdlib.BoundLogger)
+    log: structlog.typing.FilteringBoundLogger = structlog.get_logger(
+        structlog.stdlib.BoundLogger
+    )
     shared_processors: list[structlog.typing.Processor] = [
         structlog.processors.add_log_level
     ]
@@ -20,8 +22,8 @@ def setup_logger() -> structlog.typing.FilteringBoundLogger:
         # Pretty printing when we run in a terminal session.
         # Automatically prints pretty tracebacks when "rich" is installed
         processors = shared_processors + [
-            structlog.processors.TimeStamper(fmt='iso', utc=True),
-            structlog.dev.ConsoleRenderer()
+            structlog.processors.TimeStamper(fmt="iso", utc=True),
+            structlog.dev.ConsoleRenderer(),
         ]
     else:
         # Print JSON when we run, e.g., in a Docker container.
@@ -29,7 +31,10 @@ def setup_logger() -> structlog.typing.FilteringBoundLogger:
         processors = shared_processors + [
             structlog.processors.TimeStamper(fmt=None, utc=True),
             structlog.processors.dict_tracebacks,
-            structlog.processors.JSONRenderer(serializer=models.base.orjson_dumps)
+            structlog.processors.JSONRenderer(serializer=models.base.orjson_dumps),
         ]
-    structlog.configure(processors)
+    structlog.configure(
+        processors=processors,
+        wrapper_class=structlog.make_filtering_bound_logger(config.LOGGING_LEVEL),
+    )
     return log

@@ -1,10 +1,18 @@
-from aiogram import Dispatcher
-from aiogram.dispatcher.filters import CommandStart, CommandHelp
+from aiogram import Router
+from aiogram.filters import CommandStart, StateFilter, Text
 
-from .help import bot_help
-from .start import bot_start
+import states
+from filters import ChatTypeFilter
+from . import start
 
 
-def setup(dp: Dispatcher):
-    dp.register_message_handler(bot_start, CommandStart())
-    dp.register_message_handler(bot_help, CommandHelp())
+def prepare_router():
+    user_router = Router()
+    user_router.message.filter(ChatTypeFilter("private"))
+
+    user_router.message.register(start.start, CommandStart())
+    user_router.message.register(
+        start.start, Text("🏠В главное меню"), StateFilter(states.user.UserMainMenu.menu)
+    )
+
+    return user_router

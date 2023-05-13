@@ -1,2 +1,1 @@
-from . import errors
-from . import user
+from . import user as user

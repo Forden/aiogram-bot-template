@@ -1,1 +1,1 @@
-from .basic import BasicButtons
+from .basic import BasicButtons as BasicButtons
