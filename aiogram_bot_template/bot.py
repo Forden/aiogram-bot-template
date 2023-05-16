@@ -155,6 +155,21 @@ async def create_db_connections(dp: Dispatcher):
         )
 
 
+async def close_db_connections(dp: Dispatcher):
+    if "temp_bot_cloud_session" in dp.workflow_data:
+        temp_bot_cloud_session: AiohttpSession = dp["temp_bot_cloud_session"]
+        await temp_bot_cloud_session.close()
+    if "temp_bot_local_session" in dp.workflow_data:
+        temp_bot_local_session: AiohttpSession = dp["temp_bot_local_session"]
+        await temp_bot_local_session.close()
+    if "db_pool" in dp.workflow_data:
+        db_pool: asyncpg.Pool = dp["db_pool"]
+        await db_pool.close()
+    if "cache_pool" in dp.workflow_data:
+        cache_pool: Redis = dp["cache_pool"]
+        await cache_pool.close()
+
+
 def setup_handlers(dp: Dispatcher):
     dp.include_router(handlers.user.prepare_router())
 
@@ -184,9 +199,12 @@ def setup_logging(dp: Dispatcher):
 
 async def setup_aiogram(dp: Dispatcher):
     setup_logging(dp)
+    logger = dp["aiogram_logger"]
+    logger.debug("Configuring aiogram")
     await create_db_connections(dp)
     setup_handlers(dp)
     setup_middlewares(dp)
+    logger.info("Configured aiogram")
 
 
 async def aiohttp_on_startup(app: web.Application):
@@ -230,15 +248,7 @@ async def aiogram_on_startup_webhook(dispatcher: Dispatcher, bot: Bot):
 
 async def aiogram_on_shutdown_webhook(dispatcher: Dispatcher, bot: Bot):
     dispatcher["aiogram_logger"].debug("Stopping webhook")
-    await dispatcher["temp_bot_cloud_session"].close()
-    if "temp_bot_local_session" in dispatcher.workflow_data:
-        await dispatcher["temp_bot_local_session"].close()
-    if "db_pool" in dispatcher.workflow_data:
-        db_pool: asyncpg.Pool = dispatcher["db_pool"]
-        await db_pool.close()
-    if "cache_pool" in dispatcher.workflow_data:
-        cache_pool: Redis = dispatcher["cache_pool"]
-        await cache_pool.close()
+    await close_db_connections(dispatcher)
     await bot.session.close()
     await dispatcher.storage.close()
     dispatcher["aiogram_logger"].info("Stopped webhook")
@@ -252,15 +262,7 @@ async def aiogram_on_startup_polling(dispatcher: Dispatcher, bot: Bot):
 
 async def aiogram_on_shutdown_polling(dispatcher: Dispatcher, bot: Bot):
     dispatcher["aiogram_logger"].debug("Stopping polling")
-    await dispatcher["temp_bot_cloud_session"].close()
-    if "temp_bot_local_session" in dispatcher.workflow_data:
-        await dispatcher["temp_bot_local_session"].close()
-    if "db_pool" in dispatcher.workflow_data:
-        db_pool: asyncpg.Pool = dispatcher["db_pool"]
-        await db_pool.close()
-    if "cache_pool" in dispatcher.workflow_data:
-        cache_pool: Redis = dispatcher["cache_pool"]
-        await cache_pool.close()
+    await close_db_connections(dispatcher)
     await bot.session.close()
     await dispatcher.storage.close()
     dispatcher["aiogram_logger"].info("Stopped polling")
