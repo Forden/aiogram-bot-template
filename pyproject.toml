@@ -21,11 +21,14 @@ ignore_missing_imports = true
 
 [tool.poetry]
 name = "aiogram-bot-template"
-version = "2.0.0"
+version = "2.1.0"
 description = "Template for creating scalable bots with aiogram"
 authors = ["Forden <24463229+Forden@users.noreply.github.com>"]
 readme = "README.md"
 packages = [{include = "aiogram_bot_template"}]
+
+[tool.poetry.scripts]
+aiogram_bot_template = "aiogram_bot_template.bot:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -37,6 +40,7 @@ asyncpg = "^0.27.0"
 redis = "^4.5.5"
 orjson = "^3.8.12"
 structlog = "^23.1.0"
+tenacity = "^8.2.2"
 
 [tool.poetry.group.dev]
 optional = true

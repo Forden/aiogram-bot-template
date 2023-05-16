@@ -1,8 +1,9 @@
 from aiogram import Router
 from aiogram.filters import CommandStart, StateFilter, Text
 
-import states
-from filters import ChatTypeFilter
+from aiogram_bot_template import states
+from aiogram_bot_template.filters import ChatTypeFilter
+
 from . import start
 
 

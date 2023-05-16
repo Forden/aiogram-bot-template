@@ -1,6 +1,7 @@
 from typing import Dict, Sequence
 
-from aiogram.types import KeyboardButton, KeyboardButtonPollType, ReplyKeyboardMarkup
+from aiogram.types import (KeyboardButton, KeyboardButtonPollType,
+                           ReplyKeyboardMarkup)
 
 from ..keyboard_utils import schema_generator
 

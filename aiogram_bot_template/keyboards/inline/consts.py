@@ -1,12 +1,8 @@
 from typing import Type, TypeVar
 
 from aiogram.filters.callback_data import CallbackData
-from aiogram.types import (
-    CallbackGame,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    LoginUrl,
-)
+from aiogram.types import (CallbackGame, InlineKeyboardButton,
+                           InlineKeyboardMarkup, LoginUrl)
 
 from ..keyboard_utils import schema_generator
 
