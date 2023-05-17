@@ -10,7 +10,9 @@ HANDLED_STR = ["Unhandled", "Handled"]
 
 class StructLoggingMiddleware(BaseMiddleware):
     def __init__(
-        self, logger: structlog.typing.FilteringBoundLogger, logger_init_values: dict
+        self,
+        logger: structlog.typing.FilteringBoundLogger,
+        logger_init_values: dict[str, Any],
     ):
         self.logger = logger
         self.logger_init_values = logger_init_values

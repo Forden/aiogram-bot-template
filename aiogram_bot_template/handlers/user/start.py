@@ -4,7 +4,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram_bot_template import states
 
 
-async def start(msg: types.Message, state: FSMContext):
+async def start(msg: types.Message, state: FSMContext) -> None:
+    if msg.from_user is None:
+        return
     m = [
         f'Hello, <a href="tg://user?id={msg.from_user.id}">{html.quote(msg.from_user.full_name)}</a>'
     ]

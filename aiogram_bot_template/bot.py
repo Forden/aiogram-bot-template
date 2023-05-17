@@ -3,6 +3,7 @@ import asyncio
 import aiojobs
 import asyncpg as asyncpg
 import orjson
+import redis
 import structlog
 import tenacity
 from aiogram import Bot, Dispatcher
@@ -10,7 +11,7 @@ from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.telegram import TelegramAPIServer
 from aiogram.fsm.storage.redis import RedisStorage
 from aiohttp import web
-from redis.asyncio import ConnectionPool, Redis
+from redis.asyncio import Redis
 from tenacity import _utils
 
 from aiogram_bot_template import handlers, utils, web_handlers
@@ -21,7 +22,9 @@ TIMEOUT_BETWEEN_ATTEMPTS = 2
 MAX_TIMEOUT = 30
 
 
-def before_log(retry_state: tenacity.RetryCallState):
+def before_log(retry_state: tenacity.RetryCallState) -> None:
+    if retry_state.outcome is None:
+        return
     if retry_state.outcome.failed:
         verb, value = "raised", retry_state.outcome.exception()
     else:
@@ -29,27 +32,27 @@ def before_log(retry_state: tenacity.RetryCallState):
     logger = retry_state.kwargs["logger"]
     logger.info(
         "Retrying {callback} in {sleep} seconds as it {verb} {value}".format(
-            callback=_utils.get_callback_name(retry_state.fn),
-            sleep=retry_state.next_action.sleep,
+            callback=_utils.get_callback_name(retry_state.fn),  # type: ignore
+            sleep=retry_state.next_action.sleep,  # type: ignore
             verb=verb,
             value=value,
         ),
-        callback=_utils.get_callback_name(retry_state.fn),
-        sleep=retry_state.next_action.sleep,
+        callback=_utils.get_callback_name(retry_state.fn),  # type: ignore
+        sleep=retry_state.next_action.sleep,  # type: ignore
         verb=verb,
         value=value,
     )
 
 
-def after_log(retry_state: tenacity.RetryCallState):
+def after_log(retry_state: tenacity.RetryCallState) -> None:
     logger = retry_state.kwargs["logger"]
     logger.info(
         "Finished call to {callback!r} after {time:.2f}, this was the {attempt} time calling it.".format(
-            callback=_utils.get_callback_name(retry_state.fn),
+            callback=_utils.get_callback_name(retry_state.fn),  # type: ignore
             time=retry_state.seconds_since_start,
             attempt=_utils.to_ordinal(retry_state.attempt_number),
         ),
-        callback=_utils.get_callback_name(retry_state.fn),
+        callback=_utils.get_callback_name(retry_state.fn),  # type: ignore
         time=retry_state.seconds_since_start,
         attempt=_utils.to_ordinal(retry_state.attempt_number),
     )
@@ -68,8 +71,8 @@ async def wait_postgres(
     user: str,
     password: str,
     database: str,
-):
-    db_pool = await asyncpg.create_pool(
+) -> asyncpg.Pool:
+    db_pool: asyncpg.Pool = await asyncpg.create_pool(
         host=host,
         port=port,
         user=user,
@@ -95,9 +98,9 @@ async def wait_redis_pool(
     port: int,
     password: str,
     database: int,
-):
-    redis_pool = Redis(
-        connection_pool=ConnectionPool(
+) -> redis.asyncio.Redis:  # type: ignore[type-arg]
+    redis_pool: redis.asyncio.Redis = redis.asyncio.Redis(  # type: ignore[type-arg]
+        connection_pool=redis.asyncio.ConnectionPool(
             host=host,
             port=port,
             password=password,
@@ -109,7 +112,7 @@ async def wait_redis_pool(
     return redis_pool
 
 
-async def create_db_connections(dp: Dispatcher):
+async def create_db_connections(dp: Dispatcher) -> None:
     logger: structlog.typing.FilteringBoundLogger = dp["business_logger"]
     logger.debug("Connecting to PostgreSQL", db="main")
     try:
@@ -155,7 +158,7 @@ async def create_db_connections(dp: Dispatcher):
         )
 
 
-async def close_db_connections(dp: Dispatcher):
+async def close_db_connections(dp: Dispatcher) -> None:
     if "temp_bot_cloud_session" in dp.workflow_data:
         temp_bot_cloud_session: AiohttpSession = dp["temp_bot_cloud_session"]
         await temp_bot_cloud_session.close()
@@ -166,15 +169,15 @@ async def close_db_connections(dp: Dispatcher):
         db_pool: asyncpg.Pool = dp["db_pool"]
         await db_pool.close()
     if "cache_pool" in dp.workflow_data:
-        cache_pool: Redis = dp["cache_pool"]
+        cache_pool: redis.asyncio.Redis = dp["cache_pool"]  # type: ignore[type-arg]
         await cache_pool.close()
 
 
-def setup_handlers(dp: Dispatcher):
+def setup_handlers(dp: Dispatcher) -> None:
     dp.include_router(handlers.user.prepare_router())
 
 
-def setup_middlewares(dp: Dispatcher):
+def setup_middlewares(dp: Dispatcher) -> None:
     dp.update.outer_middleware(
         StructLoggingMiddleware(
             logger=dp["aiogram_logger"], logger_init_values=dp["aiogram_logger_init"]
@@ -182,7 +185,7 @@ def setup_middlewares(dp: Dispatcher):
     )
 
 
-def setup_logging(dp: Dispatcher):
+def setup_logging(dp: Dispatcher) -> None:
     dp["business_logger_init"] = {"type": "business"}
     dp["business_logger"] = utils.logging.setup_logger().bind(
         **dp["business_logger_init"]
@@ -197,7 +200,7 @@ def setup_logging(dp: Dispatcher):
     dp["cache_logger"] = utils.logging.setup_logger().bind(**dp["cache_logger_init"])
 
 
-async def setup_aiogram(dp: Dispatcher):
+async def setup_aiogram(dp: Dispatcher) -> None:
     setup_logging(dp)
     logger = dp["aiogram_logger"]
     logger.debug("Configuring aiogram")
@@ -207,7 +210,7 @@ async def setup_aiogram(dp: Dispatcher):
     logger.info("Configured aiogram")
 
 
-async def aiohttp_on_startup(app: web.Application):
+async def aiohttp_on_startup(app: web.Application) -> None:
     dp: Dispatcher = app["dp"]
     workflow_data = {"app": app, "dispatcher": dp}
     if "bot" in app:
@@ -215,7 +218,7 @@ async def aiohttp_on_startup(app: web.Application):
     await dp.emit_startup(**workflow_data)
 
 
-async def aiohttp_on_shutdown(app: web.Application):
+async def aiohttp_on_shutdown(app: web.Application) -> None:
     dp: Dispatcher = app["dp"]
     for i in [app, *app._subapps]:  # dirty
         if "scheduler" in i:
@@ -232,7 +235,7 @@ async def aiohttp_on_shutdown(app: web.Application):
     await dp.emit_shutdown(**workflow_data)
 
 
-async def aiogram_on_startup_webhook(dispatcher: Dispatcher, bot: Bot):
+async def aiogram_on_startup_webhook(dispatcher: Dispatcher, bot: Bot) -> None:
     await setup_aiogram(dispatcher)
     webhook_logger = dispatcher["aiogram_logger"].bind(
         webhook_url=config.MAIN_WEBHOOK_ADDRESS
@@ -246,7 +249,7 @@ async def aiogram_on_startup_webhook(dispatcher: Dispatcher, bot: Bot):
     webhook_logger.info("Configured webhook")
 
 
-async def aiogram_on_shutdown_webhook(dispatcher: Dispatcher, bot: Bot):
+async def aiogram_on_shutdown_webhook(dispatcher: Dispatcher, bot: Bot) -> None:
     dispatcher["aiogram_logger"].debug("Stopping webhook")
     await close_db_connections(dispatcher)
     await bot.session.close()
@@ -254,13 +257,13 @@ async def aiogram_on_shutdown_webhook(dispatcher: Dispatcher, bot: Bot):
     dispatcher["aiogram_logger"].info("Stopped webhook")
 
 
-async def aiogram_on_startup_polling(dispatcher: Dispatcher, bot: Bot):
+async def aiogram_on_startup_polling(dispatcher: Dispatcher, bot: Bot) -> None:
     await bot.delete_webhook(drop_pending_updates=True)
     await setup_aiogram(dispatcher)
     dispatcher["aiogram_logger"].info("Started polling")
 
 
-async def aiogram_on_shutdown_polling(dispatcher: Dispatcher, bot: Bot):
+async def aiogram_on_shutdown_polling(dispatcher: Dispatcher, bot: Bot) -> None:
     dispatcher["aiogram_logger"].debug("Stopping polling")
     await close_db_connections(dispatcher)
     await bot.session.close()
@@ -287,7 +290,7 @@ async def setup_aiohttp_app(bot: Bot, dp: Dispatcher) -> web.Application:
     return app
 
 
-def main():
+def main() -> None:
     if config.USE_CUSTOM_API_SERVER:
         session = AiohttpSession(
             api=TelegramAPIServer(

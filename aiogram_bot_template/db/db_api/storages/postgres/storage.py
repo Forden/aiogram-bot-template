@@ -1,4 +1,4 @@
-from typing import Optional, Type, TypeVar
+from typing import Any, Optional, Type, TypeVar
 
 import asyncpg
 import structlog
@@ -13,7 +13,7 @@ class PostgresConnection(RawConnection):
         self,
         connection_poll: asyncpg.Pool,
         logger: structlog.typing.FilteringBoundLogger,
-        logger_init_values: dict,
+        logger_init_values: dict[str, Any],
     ):
         self._pool = connection_poll
 
@@ -21,7 +21,10 @@ class PostgresConnection(RawConnection):
         self._logger_init_values = logger_init_values
 
     async def _fetch(
-        self, sql: str, params: Optional[tuple | list[tuple]], model_type: Type[T]
+        self,
+        sql: str,
+        params: Optional[tuple[Any, ...] | list[tuple[Any, ...]]],
+        model_type: Type[T],
     ) -> list[T]:
         self._logger = self._logger.new(**self._logger_init_values)
         self._logger = self._logger.bind(sql=sql, params=params)
@@ -46,7 +49,10 @@ class PostgresConnection(RawConnection):
         return []
 
     async def _fetchrow(
-        self, sql: str, params: Optional[tuple | list[tuple]], model_type: Type[T]
+        self,
+        sql: str,
+        params: Optional[tuple[Any, ...] | list[tuple[Any, ...]]],
+        model_type: Type[T],
     ) -> Optional[T]:
         self._logger = self._logger.new(**self._logger_init_values)
         self._logger = self._logger.bind(sql=sql, params=params)
@@ -68,7 +74,9 @@ class PostgresConnection(RawConnection):
                     return _convert_to_model(raw, model_type)
         return None
 
-    async def _execute(self, sql: str, params: Optional[tuple | list[tuple]]):
+    async def _execute(
+        self, sql: str, params: Optional[tuple[Any, ...] | list[tuple[Any, ...]]]
+    ) -> None:
         self._logger = self._logger.new(**self._logger_init_values)
         self._logger = self._logger.bind(sql=sql, params=params)
         self._logger.debug("Making query to DB")

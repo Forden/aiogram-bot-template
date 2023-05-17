@@ -7,7 +7,7 @@ from aiogram_bot_template.filters import ChatTypeFilter
 from . import start
 
 
-def prepare_router():
+def prepare_router() -> Router:
     user_router = Router()
     user_router.message.filter(ChatTypeFilter("private"))
 
