@@ -1,0 +1,15 @@
+[Unit]
+Description=Aiogram bot
+After=network.target
+
+[Service]
+User=root
+Group=root
+Type=simple
+WorkingDirectory=/opt/aiogram-bot-template
+ExecStart=/root/.local/bin/poetry run aiogram_bot_template
+EnvironmentFile=/opt/aiogram-bot-template/.env
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
