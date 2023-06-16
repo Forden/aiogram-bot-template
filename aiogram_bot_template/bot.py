@@ -114,6 +114,7 @@ async def wait_redis_pool(
 
 async def create_db_connections(dp: Dispatcher) -> None:
     logger: structlog.typing.FilteringBoundLogger = dp["business_logger"]
+
     logger.debug("Connecting to PostgreSQL", db="main")
     try:
         db_pool = await wait_postgres(
@@ -130,6 +131,7 @@ async def create_db_connections(dp: Dispatcher) -> None:
     else:
         logger.debug("Succesfully connected to PostgreSQL", db="main")
     dp["db_pool"] = db_pool
+
     logger.debug("Connecting to Redis")
     try:
         redis_pool = await wait_redis_pool(
@@ -178,26 +180,14 @@ def setup_handlers(dp: Dispatcher) -> None:
 
 
 def setup_middlewares(dp: Dispatcher) -> None:
-    dp.update.outer_middleware(
-        StructLoggingMiddleware(
-            logger=dp["aiogram_logger"], logger_init_values=dp["aiogram_logger_init"]
-        )
-    )
+    dp.update.outer_middleware(StructLoggingMiddleware(logger=dp["aiogram_logger"]))
 
 
 def setup_logging(dp: Dispatcher) -> None:
-    dp["business_logger_init"] = {"type": "business"}
-    dp["business_logger"] = utils.logging.setup_logger().bind(
-        **dp["business_logger_init"]
-    )
-    dp["aiogram_logger_init"] = {"type": "aiogram"}
-    dp["aiogram_logger"] = utils.logging.setup_logger().bind(
-        **dp["aiogram_logger_init"]
-    )
-    dp["db_logger_init"] = {"type": "db"}
-    dp["db_logger"] = utils.logging.setup_logger().bind(**dp["db_logger_init"])
-    dp["cache_logger_init"] = {"type": "cache"}
-    dp["cache_logger"] = utils.logging.setup_logger().bind(**dp["cache_logger_init"])
+    dp["aiogram_logger"] = utils.logging.setup_logger().bind(type="aiogram")
+    dp["db_logger"] = utils.logging.setup_logger().bind(type="db")
+    dp["cache_logger"] = utils.logging.setup_logger().bind(type="cache")
+    dp["business_logger"] = utils.logging.setup_logger().bind(type="business")
 
 
 async def setup_aiogram(dp: Dispatcher) -> None:
@@ -242,7 +232,9 @@ async def aiogram_on_startup_webhook(dispatcher: Dispatcher, bot: Bot) -> None:
     )
     webhook_logger.debug("Configuring webhook")
     await bot.set_webhook(
-        url=config.MAIN_WEBHOOK_ADDRESS.format(token=config.BOT_TOKEN),
+        url=config.MAIN_WEBHOOK_ADDRESS.format(
+            token=config.BOT_TOKEN, bot_id=config.BOT_TOKEN.split(":")[0]
+        ),
         allowed_updates=dispatcher.resolve_used_update_types(),
         secret_token=config.MAIN_WEBHOOK_SECRET_TOKEN,
     )

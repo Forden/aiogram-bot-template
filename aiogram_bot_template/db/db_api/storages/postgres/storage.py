@@ -13,12 +13,10 @@ class PostgresConnection(RawConnection):
         self,
         connection_poll: asyncpg.Pool,
         logger: structlog.typing.FilteringBoundLogger,
-        logger_init_values: dict[str, Any],
     ):
         self._pool = connection_poll
 
         self._logger = logger
-        self._logger_init_values = logger_init_values
 
     async def _fetch(
         self,
@@ -26,9 +24,8 @@ class PostgresConnection(RawConnection):
         params: Optional[tuple[Any, ...] | list[tuple[Any, ...]]],
         model_type: Type[T],
     ) -> list[T]:
-        self._logger = self._logger.new(**self._logger_init_values)
-        self._logger = self._logger.bind(sql=sql, params=params)
-        self._logger.debug("Making query to DB")
+        request_logger = self._logger.bind(sql=sql, params=params)
+        request_logger.debug("Making query to DB")
         con: asyncpg.Connection
         async with self._pool.acquire() as con:
             try:
@@ -38,9 +35,8 @@ class PostgresConnection(RawConnection):
                     raw = await con.fetch(sql)
             except Exception as e:
                 # change to appropriate error handling
-                self._logger = self._logger.bind(error=e)
-                self._logger.error(f"{e}")
-                self._logger = self._logger.unbind("error")
+                request_logger = request_logger.bind(error=e)
+                request_logger.error(f"{e}")
             else:
                 if raw:
                     return [_convert_to_model(i, model_type) for i in raw]
@@ -54,9 +50,8 @@ class PostgresConnection(RawConnection):
         params: Optional[tuple[Any, ...] | list[tuple[Any, ...]]],
         model_type: Type[T],
     ) -> Optional[T]:
-        self._logger = self._logger.new(**self._logger_init_values)
-        self._logger = self._logger.bind(sql=sql, params=params)
-        self._logger.debug("Making query to DB")
+        request_logger = self._logger.bind(sql=sql, params=params)
+        request_logger.debug("Making query to DB")
         con: asyncpg.Connection
         async with self._pool.acquire() as con:
             try:
@@ -66,9 +61,8 @@ class PostgresConnection(RawConnection):
                     raw = await con.fetchrow(sql)
             except Exception as e:
                 # change to appropriate error handling
-                self._logger = self._logger.bind(error=e)
-                self._logger.error(f"{e}")
-                self._logger = self._logger.unbind("error")
+                request_logger = self._logger.bind(error=e)
+                request_logger.error(f"{e}")
             else:
                 if raw is not None:
                     return _convert_to_model(raw, model_type)
@@ -77,9 +71,8 @@ class PostgresConnection(RawConnection):
     async def _execute(
         self, sql: str, params: Optional[tuple[Any, ...] | list[tuple[Any, ...]]]
     ) -> None:
-        self._logger = self._logger.new(**self._logger_init_values)
-        self._logger = self._logger.bind(sql=sql, params=params)
-        self._logger.debug("Making query to DB")
+        request_logger = self._logger.bind(sql=sql, params=params)
+        request_logger.debug("Making query to DB")
         con: asyncpg.Connection
         async with self._pool.acquire() as con:
             try:
@@ -92,9 +85,8 @@ class PostgresConnection(RawConnection):
                     await con.execute(sql)
             except Exception as e:
                 # change to appropriate error handling
-                self._logger = self._logger.bind(error=e)
-                self._logger.error(f"{e}")
-                self._logger = self._logger.unbind("error")
+                request_logger = request_logger.bind(error=e)
+                request_logger.error(f"{e}")
 
 
 def _convert_to_model(data: asyncpg.Record, model: Type[T]) -> T:
