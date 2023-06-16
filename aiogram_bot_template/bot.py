@@ -9,7 +9,7 @@ import tenacity
 from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.telegram import TelegramAPIServer
-from aiogram.fsm.storage.redis import RedisStorage
+from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiohttp import web
 from redis.asyncio import Redis
 from tenacity import _utils
@@ -303,7 +303,8 @@ def main() -> None:
                 password=config.FSM_PASSWORD,
                 port=config.FSM_PORT,
                 db=0,
-            )
+            ),
+            key_builder=DefaultKeyBuilder(with_bot_id=True),
         )
     )
 
