@@ -21,9 +21,12 @@ FSM_HOST: str = env.str("FSM_HOST")
 FSM_PORT: int = env.int("FSM_PORT")
 FSM_PASSWORD: str = env.str("FSM_PASSWORD")
 
-CACHE_HOST: str = env.str("CACHE_HOST")
-CACHE_PORT: int = env.int("CACHE_PORT")
-CACHE_PASSWORD: str = env.str("CACHE_PASSWORD")
+USE_CACHE: bool = env.bool("USE_CACHE")
+
+if USE_CACHE:
+    CACHE_HOST: str = env.str("CACHE_HOST")
+    CACHE_PORT: int = env.int("CACHE_PORT")
+    CACHE_PASSWORD: str = env.str("CACHE_PASSWORD")
 
 USE_WEBHOOK: bool = env.bool("USE_WEBHOOK", False)
 
