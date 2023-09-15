@@ -11,7 +11,6 @@ tg_updates_app = web.Application()
 
 
 async def process_update(upd: types.Update, bot: Bot, dp: Dispatcher) -> None:
-    Bot.set_current(bot)
     await dp.feed_webhook_update(bot, upd)
 
 

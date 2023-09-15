@@ -9,7 +9,7 @@ import tenacity
 from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.telegram import TelegramAPIServer
-from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
+from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from aiohttp import web
 from redis.asyncio import Redis
 from tenacity import _utils
