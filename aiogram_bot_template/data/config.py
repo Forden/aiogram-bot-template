@@ -21,7 +21,7 @@ FSM_HOST: str = env.str("FSM_HOST")
 FSM_PORT: int = env.int("FSM_PORT")
 FSM_PASSWORD: str = env.str("FSM_PASSWORD")
 
-USE_CACHE: bool = env.bool("USE_CACHE")
+USE_CACHE: bool = env.bool("USE_CACHE", False)
 
 if USE_CACHE:
     CACHE_HOST: str = env.str("CACHE_HOST")
