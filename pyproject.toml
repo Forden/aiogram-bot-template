@@ -45,10 +45,10 @@ ignore-init-module-imports = true
 
 
 [tool.poetry]
-name = "faucetbot"
-version = "0.1.0"
+name = "aiogram-bot-template"
+version = "2.2.0"
 description = "Template for creating scalable bots with aiogram"
-authors = ["Sergio-prog"]
+authors = ["Forden <24463229+Forden@users.noreply.github.com>"]
 readme = "README.md"
 packages = [{ include = "aiogram_bot_template" }]
 
