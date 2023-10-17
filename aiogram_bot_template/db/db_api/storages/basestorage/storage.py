@@ -1,5 +1,5 @@
 import typing
-from typing import Any, Optional, TypeVar
+from typing import Any, Optional, TypeVar, Union
 
 T = TypeVar("T")
 
@@ -32,7 +32,7 @@ class RawConnection:
     async def _fetch(
         self,
         sql: str,
-        params: Optional[tuple[Any, ...] | list[tuple[Any, ...]]] = None,
+        params: Optional[Union[tuple[Any, ...], list[tuple[Any, ...]]]] = None,
         con: Optional[Any] = None,
     ) -> MultipleQueryResults:
         raise NotImplementedError
@@ -40,7 +40,7 @@ class RawConnection:
     async def _fetchrow(
         self,
         sql: str,
-        params: Optional[tuple[Any, ...] | list[tuple[Any, ...]]] = None,
+        params: Optional[Union[tuple[Any, ...], list[tuple[Any, ...]]]] = None,
         con: Optional[Any] = None,
     ) -> SingleQueryResult:
         raise NotImplementedError
@@ -48,7 +48,7 @@ class RawConnection:
     async def _execute(
         self,
         sql: str,
-        params: Optional[tuple[Any, ...] | list[tuple[Any, ...]]] = None,
+        params: Optional[Union[tuple[Any, ...], list[tuple[Any, ...]]]] = None,
         con: Optional[Any] = None,
     ) -> None:
         raise NotImplementedError

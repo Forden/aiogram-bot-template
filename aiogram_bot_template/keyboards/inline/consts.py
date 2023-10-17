@@ -1,4 +1,4 @@
-from typing import Type, TypeVar
+from typing import Type, TypeVar, Union
 
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import (
@@ -15,7 +15,7 @@ A = TypeVar("A", bound=Type[CallbackData])
 
 class InlineConstructor:
     aliases = {"cb": "callback_data"}
-    available_properities = [
+    available_properties = [
         "text",
         "callback_data",
         "url",
@@ -32,7 +32,7 @@ class InlineConstructor:
         actions: list[
             dict[
                 str,
-                str | bool | A | LoginUrl | CallbackGame,
+                Union[str, bool, A, LoginUrl, CallbackGame],
             ]
         ],
         schema: list[int],
@@ -42,7 +42,7 @@ class InlineConstructor:
         for a in actions:
             data: dict[
                 str,
-                str | bool | A | LoginUrl | CallbackGame,
+                Union[str, bool, A, LoginUrl, CallbackGame],
             ] = {}
             for k, v in InlineConstructor.aliases.items():
                 if k in a:

@@ -1,15 +1,17 @@
+from typing import Union
+
 from aiogram.filters import BaseFilter
 from aiogram.types import CallbackQuery, Message
 
 
 class TextFilter(BaseFilter):
-    def __init__(self, text: str | list[str]):
+    def __init__(self, text: Union[str, list[str]]):
         if isinstance(text, str):
             self.text = [text]
         else:
             self.text = text
 
-    async def __call__(self, obj: Message | CallbackQuery) -> bool:
+    async def __call__(self, obj: Union[Message, CallbackQuery]) -> bool:
         if isinstance(obj, Message):
             txt = obj.text or obj.caption
             return any(i == txt for i in self.text)

@@ -1,14 +1,14 @@
 [tool.black]
-target-version = ["py310"]
+target-version = ["py39"]
 
 [tool.isort]
 profile = "black"
-py_version = 310
+py_version = 39
 force_alphabetical_sort_within_sections = true
 group_by_package = true
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.9"
 files = "bot.py"
 show_error_codes = true
 show_error_context = true
@@ -40,15 +40,15 @@ ignore_missing_imports = true
 select = ["E", "F", "B"]
 ignore = ["E501"]
 unfixable = ["B"]
-target-version = "py310"
+target-version = "py39"
 ignore-init-module-imports = true
 
 
 [tool.poetry]
-name = "aiogram-bot-template"
-version = "2.2.0"
+name = "faucetbot"
+version = "0.1.0"
 description = "Template for creating scalable bots with aiogram"
-authors = ["Forden <24463229+Forden@users.noreply.github.com>"]
+authors = ["Sergio-prog"]
 readme = "README.md"
 packages = [{ include = "aiogram_bot_template" }]
 
@@ -56,7 +56,7 @@ packages = [{ include = "aiogram_bot_template" }]
 aiogram_bot_template = "aiogram_bot_template.bot:main"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.9"
 environs = "^9.5.0"
 aiohttp = "3.8.5"
 aiojobs = "1.2.0"
