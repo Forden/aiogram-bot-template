@@ -1,17 +1,21 @@
-from typing import Dict, Sequence
+from collections.abc import Sequence
+from types import MappingProxyType
 
 from aiogram.types import KeyboardButton, KeyboardButtonPollType, ReplyKeyboardMarkup
 
-from ..keyboard_utils import schema_generator
+from aiogram_bot_template.keyboards.keyboard_utils import schema_generator
 
 
 class DefaultConstructor:
-    aliases = {
-        "contact": "request_contact",
-        "location": "request_location",
-        "poll": "request_poll",
-    }
-    available_properities = [
+
+    aliases = MappingProxyType(
+        {
+            "contact": "request_contact",
+            "location": "request_location",
+            "poll": "request_poll",
+        },
+    )
+    available_properities = (
         "text",
         "request_contact",
         "request_location",
@@ -19,12 +23,12 @@ class DefaultConstructor:
         "request_user",
         "request_chat",
         "web_app",
-    ]
+    )
     properties_amount = 1
 
     @staticmethod
     def _create_kb(
-        actions: Sequence[str | Dict[str, str | bool | KeyboardButtonPollType]],
+        actions: Sequence[str | dict[str, str | bool | KeyboardButtonPollType]],
         schema: Sequence[int],
         resize_keyboard: bool = True,
         selective: bool = False,
@@ -35,8 +39,8 @@ class DefaultConstructor:
         # noinspection DuplicatedCode
         for a in actions:
             if isinstance(a, str):
-                a = {"text": a}
-            data: Dict[str, str | bool | KeyboardButtonPollType] = {}
+                a = {"text": a}  # noqa: PLW2901
+            data: dict[str, str | bool | KeyboardButtonPollType] = {}
             for k, v in DefaultConstructor.aliases.items():
                 if k in a:
                     a[v] = a[k]
@@ -48,7 +52,8 @@ class DefaultConstructor:
                     else:
                         break
             if len(data) != DefaultConstructor.properties_amount:
-                raise ValueError("Недостаточно данных для создания кнопки")
+                msg = "Недостаточно данных для создания кнопки"
+                raise ValueError(msg)
             btns.append(KeyboardButton(**data))  # type: ignore
         kb = ReplyKeyboardMarkup(
             resize_keyboard=resize_keyboard,

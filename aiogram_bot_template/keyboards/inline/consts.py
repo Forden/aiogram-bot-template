@@ -1,4 +1,5 @@
-from typing import Type, TypeVar
+from types import MappingProxyType
+from typing import TypeVar
 
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import (
@@ -8,14 +9,14 @@ from aiogram.types import (
     LoginUrl,
 )
 
-from ..keyboard_utils import schema_generator
+from aiogram_bot_template.keyboards.keyboard_utils import schema_generator
 
-A = TypeVar("A", bound=Type[CallbackData])
+A = TypeVar("A", bound=type[CallbackData])
 
 
 class InlineConstructor:
-    aliases = {"cb": "callback_data"}
-    available_properities = [
+    aliases = MappingProxyType({"cb": "callback_data"})
+    available_properities = (
         "text",
         "callback_data",
         "url",
@@ -24,7 +25,7 @@ class InlineConstructor:
         "switch_inline_query_current_chat",
         "callback_game",
         "pay",
-    ]
+    )
     properties_amount = 2
 
     @staticmethod
@@ -54,17 +55,21 @@ class InlineConstructor:
                         data[k] = a[k]
                     else:
                         break
-            if "callback_data" in data:
-                if isinstance(data["callback_data"], CallbackData):
-                    data["callback_data"] = data["callback_data"].pack()
+            if "callback_data" in data and isinstance(
+                data["callback_data"],
+                CallbackData,
+            ):
+                data["callback_data"] = data["callback_data"].pack()
             if "pay" in data:
                 if len(btns) != 0 and data["pay"]:
-                    raise ValueError("Платежная кнопка должна идти первой в клавиатуре")
+                    msg = "Платежная кнопка должна идти первой в клавиатуре"
+                    raise ValueError(msg)
                 data["pay"] = a["pay"]
             if len(data) != InlineConstructor.properties_amount:
-                raise ValueError("Недостаточно данных для создания кнопки")
+                msg = "Недостаточно данных для создания кнопки"
+                raise ValueError(msg)
             btns.append(InlineKeyboardButton(**data))  # type: ignore
         kb = InlineKeyboardMarkup(
-            inline_keyboard=schema_generator.create_keyboard_layout(btns, schema)
+            inline_keyboard=schema_generator.create_keyboard_layout(btns, schema),
         )
         return kb

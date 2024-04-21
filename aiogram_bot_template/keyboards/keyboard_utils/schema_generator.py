@@ -1,11 +1,13 @@
-from typing import Sequence, TypeVar
+from collections.abc import Sequence
+from typing import TypeVar
 
 T = TypeVar("T")
 
 
 def create_keyboard_layout(buttons: Sequence[T], count: Sequence[int]) -> list[list[T]]:
     if sum(count) != len(buttons):
-        raise ValueError("Количество кнопок не совпадает со схемой")
+        msg = "Количество кнопок не совпадает со схемой"  # noqa: RUF001
+        raise ValueError(msg)
     tmplist: list[list[T]] = []
     btn_number = 0
     for a in count:

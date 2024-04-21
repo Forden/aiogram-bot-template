@@ -24,7 +24,8 @@ class BasicButtons(DefaultConstructor):
 
     @staticmethod
     def confirmation(
-        add_back: bool = False, add_cancel: bool = False
+        add_back: bool = False,
+        add_cancel: bool = False,
     ) -> aiogram.types.ReplyKeyboardMarkup:
         schema = []
         btns = []
@@ -40,7 +41,8 @@ class BasicButtons(DefaultConstructor):
 
     @staticmethod
     def skip(
-        add_back: bool = False, add_cancel: bool = False
+        add_back: bool = False,
+        add_cancel: bool = False,
     ) -> aiogram.types.ReplyKeyboardMarkup:
         schema = [1]
         btns = ["▶️Пропустить"]
@@ -54,7 +56,8 @@ class BasicButtons(DefaultConstructor):
 
     @staticmethod
     def yes(
-        add_back: bool = False, add_cancel: bool = False
+        add_back: bool = False,
+        add_cancel: bool = False,
     ) -> aiogram.types.ReplyKeyboardMarkup:
         schema = [1]
         btns = ["✅Да"]
@@ -68,7 +71,8 @@ class BasicButtons(DefaultConstructor):
 
     @staticmethod
     def no(
-        add_back: bool = False, add_cancel: bool = False
+        add_back: bool = False,
+        add_cancel: bool = False,
     ) -> aiogram.types.ReplyKeyboardMarkup:
         schema = [1]
         btns = ["❌Нет"]
@@ -82,7 +86,8 @@ class BasicButtons(DefaultConstructor):
 
     @staticmethod
     def yes_n_no(
-        add_back: bool = False, add_cancel: bool = False
+        add_back: bool = False,
+        add_cancel: bool = False,
     ) -> aiogram.types.ReplyKeyboardMarkup:
         schema = [2]
         btns = ["✅Да", "❌Нет"]

@@ -1,13 +1,10 @@
 import asyncio
+from typing import TYPE_CHECKING
 
 import aiojobs
-import asyncpg as asyncpg
 import orjson
-import redis
-import structlog
 import tenacity
 from aiogram import Bot, Dispatcher
-from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.telegram import TelegramAPIServer
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from aiohttp import web
@@ -16,6 +13,12 @@ from redis.asyncio import Redis
 from aiogram_bot_template import handlers, utils, web_handlers
 from aiogram_bot_template.data import config
 from aiogram_bot_template.middlewares import StructLoggingMiddleware
+
+if TYPE_CHECKING:
+    import asyncpg as asyncpg
+    import redis
+    import structlog
+    from aiogram.client.session.aiohttp import AiohttpSession
 
 
 async def create_db_connections(dp: Dispatcher) -> None:
@@ -32,7 +35,7 @@ async def create_db_connections(dp: Dispatcher) -> None:
             database=config.PG_DATABASE,
         )
     except tenacity.RetryError:
-        logger.error("Failed to connect to PostgreSQL", db="main")
+        logger.exception("Failed to connect to PostgreSQL", db="main")
         exit(1)
     else:
         logger.debug("Succesfully connected to PostgreSQL", db="main")
@@ -49,7 +52,7 @@ async def create_db_connections(dp: Dispatcher) -> None:
                 database=0,
             )
         except tenacity.RetryError:
-            logger.error("Failed to connect to Redis")
+            logger.exception("Failed to connect to Redis")
             exit(1)
         else:
             logger.debug("Succesfully connected to Redis")
@@ -121,13 +124,13 @@ async def aiohttp_on_startup(app: web.Application) -> None:
 
 async def aiohttp_on_shutdown(app: web.Application) -> None:
     dp: Dispatcher = app["dp"]
-    for i in [app, *app._subapps]:  # dirty
+    for i in [app, *app._subapps]:  # noqa: SLF001 # dirty
         if "scheduler" in i:
             scheduler: aiojobs.Scheduler = i["scheduler"]
-            scheduler._closed = True
+            scheduler._closed = True  # noqa: SLF001
             while scheduler.pending_count != 0:
                 dp["aiogram_logger"].info(
-                    f"Waiting for {scheduler.pending_count} tasks to complete"
+                    f"Waiting for {scheduler.pending_count} tasks to complete",
                 )
                 await asyncio.sleep(1)
     workflow_data = {"app": app, "dispatcher": dp}
@@ -139,12 +142,13 @@ async def aiohttp_on_shutdown(app: web.Application) -> None:
 async def aiogram_on_startup_webhook(dispatcher: Dispatcher, bot: Bot) -> None:
     await setup_aiogram(dispatcher)
     webhook_logger = dispatcher["aiogram_logger"].bind(
-        webhook_url=config.MAIN_WEBHOOK_ADDRESS
+        webhook_url=config.MAIN_WEBHOOK_ADDRESS,
     )
     webhook_logger.debug("Configuring webhook")
     await bot.set_webhook(
         url=config.MAIN_WEBHOOK_ADDRESS.format(
-            token=config.BOT_TOKEN, bot_id=config.BOT_TOKEN.split(":")[0]
+            token=config.BOT_TOKEN,
+            bot_id=config.BOT_TOKEN.split(":")[0],
         ),
         allowed_updates=dispatcher.resolve_used_update_types(),
         secret_token=config.MAIN_WEBHOOK_SECRET_TOKEN,
@@ -174,7 +178,10 @@ async def aiogram_on_shutdown_polling(dispatcher: Dispatcher, bot: Bot) -> None:
     dispatcher["aiogram_logger"].info("Stopped polling")
 
 
-async def setup_aiohttp_app(bot: Bot, dp: Dispatcher) -> web.Application:
+async def setup_aiohttp_app(  # noqa: RUF029
+    bot: Bot,
+    dp: Dispatcher,
+) -> web.Application:
     scheduler = aiojobs.Scheduler()
     app = web.Application()
     subapps: list[tuple[str, web.Application]] = [
@@ -222,7 +229,7 @@ def main() -> None:
                 db=0,
             ),
             key_builder=DefaultKeyBuilder(with_bot_id=True),
-        )
+        ),
     )
     dp["aiogram_session_logger"] = aiogram_session_logger
 

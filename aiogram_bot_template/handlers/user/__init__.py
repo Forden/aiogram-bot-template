@@ -14,7 +14,7 @@ def prepare_router() -> Router:
     user_router.message.register(start.start, CommandStart())
     user_router.message.register(
         start.start,
-        TextFilter("🏠В главное меню"),
+        TextFilter("🏠В главное меню"),  # noqa: RUF001
         StateFilter(states.user.UserMainMenu.menu),
     )
 

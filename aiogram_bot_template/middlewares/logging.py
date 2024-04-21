@@ -1,5 +1,6 @@
 import time
-from typing import Any, Awaitable, Callable, cast
+from collections.abc import Awaitable, Callable
+from typing import Any, cast
 
 import structlog.typing
 from aiogram import BaseMiddleware
@@ -9,9 +10,9 @@ HANDLED_STR = ["Unhandled", "Handled"]
 
 
 class StructLoggingMiddleware(BaseMiddleware):
-    def __init__(self, logger: structlog.typing.FilteringBoundLogger):
+    def __init__(self, logger: structlog.typing.FilteringBoundLogger) -> None:
         self.logger = logger
-        super(StructLoggingMiddleware, self).__init__()
+        super().__init__()
 
     async def __call__(
         self,

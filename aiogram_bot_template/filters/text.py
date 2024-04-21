@@ -3,7 +3,7 @@ from aiogram.types import CallbackQuery, Message
 
 
 class TextFilter(BaseFilter):
-    def __init__(self, text: str | list[str]):
+    def __init__(self, text: str | list[str]) -> None:
         if isinstance(text, str):
             self.text = [text]
         else:
@@ -13,6 +13,6 @@ class TextFilter(BaseFilter):
         if isinstance(obj, Message):
             txt = obj.text or obj.caption
             return any(i == txt for i in self.text)
-        elif isinstance(obj, CallbackQuery):
+        if isinstance(obj, CallbackQuery):
             return obj.data in self.text
         return False
