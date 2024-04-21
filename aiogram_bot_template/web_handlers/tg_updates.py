@@ -39,7 +39,6 @@ async def execute(req: web.Request) -> web.Response:
         raise web.HTTPTooManyRequests
     if scheduler.closed:
         raise web.HTTPServiceUnavailable(reason="Closed queue")
-    req.app["total_requests_counter"].inc()
     await scheduler.spawn(
         process_update(
             types.Update(**(await req.json(loads=orjson.loads))),
