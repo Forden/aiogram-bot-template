@@ -10,6 +10,7 @@ group_by_package = true
 [tool.mypy]
 python_version = "3.10"
 files = "bot.py"
+plugins = "pydantic.mypy"
 show_error_codes = true
 show_error_context = true
 pretty = true
@@ -37,16 +38,27 @@ ignore_missing_imports = true
 
 
 [tool.ruff]
-select = ["E", "F", "B"]
-ignore = ["E501"]
-unfixable = ["B"]
 target-version = "py310"
+preview = true
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "B", "UP", "SIM", "N", "YTT", "ANN", "ASYNC", "S", "A", "COM", "C4",
+    "DTZ", "T10", "EM", "FA", "ISC", "ICN", "G", "INP", "PIE", "T20", "PYI", "PT", "Q",
+    "RSE", "RET", "SLF", "SLOT", "TID", "TCH", "INT", "ARG", "PTH", "TD", "FIX", "ERA",
+    "PLC", "PLE", "PLW", "TRY", "FLY", "NPY", "AIR", "PERF", "FURB", "LOG", "RUF"
+]
+ignore = ["E501", "ANN101", "ANN401", "RET504", "PLC0414", "SIM108"]
+unfixable = ["B"]
 ignore-init-module-imports = true
+
+[tool.ruff.format]
+line-ending = "lf"
 
 
 [tool.poetry]
 name = "aiogram-bot-template"
-version = "2.2.0"
+version = "2.3.0"
 description = "Template for creating scalable bots with aiogram"
 authors = ["Forden <24463229+Forden@users.noreply.github.com>"]
 readme = "README.md"
@@ -57,29 +69,31 @@ aiogram_bot_template = "aiogram_bot_template.bot:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-environs = "^10.3.0"
-aiohttp = "3.9.3"
-aiojobs = "1.2.1"
-aiogram = "3.3.0"
+aiogram = "^3"
+environs = "11.0.0"
+redis = "~5.0"
 asyncpg = "0.29.0"
-redis = "5.0.1"
-orjson = "3.9.12"
-structlog = "^24.1.0"
-tenacity = "8.2.3"
-pytz = "^2023.4"
+pydantic = "~2.5"
+structlog = "24.1.0"
+aiojobs = "1.2.1"
+orjson = "~3.9"
+tenacity = "^8.2.2"
+pytz = "^2024"
+aiohttp = "~3.9"
+arrow = "^1.3.0"
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^1.3.0"
-black = { extras = ["d"], version = "^23.3.0" }
-ruff = "^0.0.267"
+mypy = "^1.9.0"
+black = { extras = ["d"], version = "^24.3.0" }
+ruff = "^0.4"
 types-redis = "^4.5.5.2"
-isort= "5.12.0"
+isort = "^5.13.2"
 types-pytz = "^2023.3.0.1"
-
-
+types-cachetools = "^5.3.0.7"
+deptry = "^0.14.2"
 
 [build-system]
 requires = ["poetry-core"]
