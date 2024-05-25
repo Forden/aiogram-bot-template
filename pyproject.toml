@@ -50,7 +50,6 @@ select = [
 ]
 ignore = ["E501", "ANN101", "ANN401", "RET504", "PLC0414", "SIM108"]
 unfixable = ["B"]
-ignore-init-module-imports = true
 
 [tool.ruff.format]
 line-ending = "lf"
