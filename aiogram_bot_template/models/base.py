@@ -1,8 +1,8 @@
 import typing
-import uuid
 
 import orjson
 import pydantic
+from pydantic import ConfigDict
 
 
 def orjson_dumps(
@@ -15,4 +15,4 @@ def orjson_dumps(
 
 
 class BaseModel(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(json_encoders={uuid.UUID: lambda x: f"{x}"})
+    model_config = ConfigDict()
