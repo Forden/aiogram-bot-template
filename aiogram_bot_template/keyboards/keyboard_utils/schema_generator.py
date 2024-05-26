@@ -1,13 +1,17 @@
 from collections.abc import Sequence
 from typing import TypeVar
 
+from aiogram_bot_template import exceptions
+
 T = TypeVar("T")
 
 
 def create_keyboard_layout(buttons: Sequence[T], count: Sequence[int]) -> list[list[T]]:
     if sum(count) != len(buttons):
-        msg = "Количество кнопок не совпадает со схемой"  # noqa: RUF001
-        raise ValueError(msg)
+        raise exceptions.WrongKeyboardSchemaError(
+            schema_size=sum(count),
+            buttons_count=len(buttons),
+        )
     tmplist: list[list[T]] = []
     btn_number = 0
     for a in count:
