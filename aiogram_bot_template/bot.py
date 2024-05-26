@@ -5,6 +5,7 @@ import aiojobs
 import orjson
 import tenacity
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
 from aiogram.client.telegram import TelegramAPIServer
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from aiohttp import web
@@ -219,7 +220,11 @@ def main() -> None:
             json_loads=orjson.loads,
             logger=aiogram_session_logger,
         )
-    bot = Bot(config.BOT_TOKEN, parse_mode="HTML", session=session)
+    bot = Bot(
+        config.BOT_TOKEN,
+        session=session,
+        default=DefaultBotProperties(parse_mode="HTML"),
+    )
 
     dp = Dispatcher(
         storage=RedisStorage(
