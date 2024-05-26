@@ -1,4 +1,4 @@
-name: Tests
+name: "Linting"
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
       - main
     paths:
-      - ".github/workflows/tests.yml"
+      - ".github/workflows/linting.yml"
       - "aiogram_bot_template/**"
       - "pyproject.toml"
   pull_request:
@@ -14,7 +14,7 @@ on:
       - master
       - main
     paths:
-      - ".github/workflows/tests.yml"
+      - ".github/workflows/linting.yml"
       - "aiogram_bot_template/**"
       - "pyproject.toml"
 
