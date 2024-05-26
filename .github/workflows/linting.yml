@@ -1,0 +1,56 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - ".github/workflows/tests.yml"
+      - "aiogram_bot_template/**"
+      - "pyproject.toml"
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - ".github/workflows/tests.yml"
+      - "aiogram_bot_template/**"
+      - "pyproject.toml"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+
+    defaults:
+      run:
+        shell: bash
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install poetry
+        run: pip install poetry
+
+      - name: Set up Python 3.10 on ubuntu-latest
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: "poetry"
+          cache-dependency-path: poetry.lock
+
+      - name: Install project dependencies
+        run: poetry install --with dev
+
+      - name: Ruff check
+        run: poetry run python -m ruff check aiogram_bot_template --config pyproject.toml --output-format=github
+      - name: Mypy check
+        run: poetry run python -m mypy aiogram_bot_template --config-file pyproject.toml
+      - name: Black check
+        run: poetry run python -m black --check --diff aiogram_bot_template --config pyproject.toml
+      - name: Isort check
+        run: poetry run python -m isort --check aiogram_bot_template
