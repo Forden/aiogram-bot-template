@@ -7,3 +7,6 @@ lint:
 	poetry run python -m isort $(PROJECT_DIR)
 	poetry run python -m mypy $(PROJECT_DIR) --config-file pyproject.toml
 	poetry run python -m black $(PROJECT_DIR) --config pyproject.toml
+
+init_project:
+	poetry run python infra/scripts/init_project.py
