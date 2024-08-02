@@ -67,11 +67,11 @@ class DefaultConstructor:
                     if k in cur_action:
                         cur_action[v] = cur_action[k]
                         del cur_action[k]
-                for k in cur_action:
-                    if k not in DefaultConstructor.possible_properties:
+                for cur_action_k, cur_action_v in cur_action.items():
+                    if cur_action_k not in DefaultConstructor.possible_properties:
                         raise exceptions.UnknownKeyboardButtonPropertyError(
-                            unknown_property=k,
-                            property_value=cur_action[k],
+                            unknown_property=cur_action_k,
+                            property_value=cur_action_v,
                             known_properties=DefaultConstructor.possible_properties,
                         )
                     if len(data) >= DefaultConstructor.max_possible_properties:
@@ -79,7 +79,7 @@ class DefaultConstructor:
                             provided_args=list(data.keys()),
                             max_args_amount=DefaultConstructor.max_possible_properties,
                         )
-                    data[k] = cur_action[k]
+                    data[cur_action_k] = cur_action_v
                 if not all(
                     added_property in data
                     for added_property in DefaultConstructor.required_properties
