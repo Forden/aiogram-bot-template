@@ -10,6 +10,7 @@ from aiogram.exceptions import (
     TelegramRetryAfter,
     TelegramServerError,
 )
+from aiogram.methods import GetUpdates
 from aiogram.methods.base import TelegramMethod, TelegramType
 
 
@@ -65,6 +66,9 @@ class SmartAiogramAiohttpSession(StructLogAiogramAiohttpSessions):
         method: TelegramMethod[TelegramType],
         timeout: int | None = None,
     ) -> TelegramType:
+        # Avoid retrying GetUpdates because Dispatcher already implements it
+        if isinstance(method, GetUpdates):
+            return await super().make_request(bot, method, timeout)
         attempt = 0
         while True:
             attempt += 1
