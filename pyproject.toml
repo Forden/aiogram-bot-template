@@ -78,7 +78,7 @@ aiojobs = "1.2.1"
 orjson = "~3.10"
 tenacity = "^8.2.2"
 pytz = "^2024"
-aiohttp = "~3.9"
+aiohttp = "~3.10"
 arrow = "^1.3.0"
 
 [tool.poetry.group.dev]
