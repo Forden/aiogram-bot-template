@@ -21,10 +21,12 @@ class PostgresConnection(BaseConnection):
         self,
         connection_poll: asyncpg.Pool,
         logger: structlog.typing.FilteringBoundLogger,
+        decode_json: bool = False,
     ) -> None:
         self._pool = connection_poll
 
         self._logger = logger
+        self._decode_json = decode_json
 
     async def apply_connection_types_codecs(
         self,
@@ -49,7 +51,8 @@ class PostgresConnection(BaseConnection):
             query: str,
             query_params: tuple[Any, ...] | list[tuple[Any, ...]] | None = None,
         ) -> Any:
-            await self.apply_connection_types_codecs(connection)
+            if self._decode_json:
+                await self.apply_connection_types_codecs(connection)
 
             if params is not None:
                 res = await connection.fetch(query, *query_params)
@@ -92,7 +95,8 @@ class PostgresConnection(BaseConnection):
             query: str,
             query_params: tuple[Any, ...] | list[tuple[Any, ...]] | None = None,
         ) -> Any:
-            await self.apply_connection_types_codecs(connection)
+            if self._decode_json:
+                await self.apply_connection_types_codecs(connection)
 
             if params is not None:
                 res = await connection.fetchrow(query, *query_params)
@@ -136,7 +140,8 @@ class PostgresConnection(BaseConnection):
             query: str,
             query_params: tuple[Any, ...] | list[tuple[Any, ...]] | None = None,
         ) -> None:
-            await self.apply_connection_types_codecs(connection)
+            if self._decode_json:
+                await self.apply_connection_types_codecs(connection)
 
             if query_params is not None:
                 if isinstance(query_params, list):
