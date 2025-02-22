@@ -29,11 +29,7 @@ async def create_db_connections(dp: Dispatcher) -> None:
     try:
         db_pool = await utils.connect_to_services.wait_postgres(
             logger=dp["db_logger"],
-            host=config.PG_HOST,
-            port=config.PG_PORT,
-            user=config.PG_USER,
-            password=config.PG_PASSWORD,
-            database=config.PG_DATABASE,
+            dsn=config.PG_LINK,
         )
     except tenacity.RetryError:
         logger.exception("Failed to connect to PostgreSQL", db="main")

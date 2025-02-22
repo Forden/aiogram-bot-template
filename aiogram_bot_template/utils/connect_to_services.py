@@ -55,18 +55,10 @@ def after_log(retry_state: tenacity.RetryCallState) -> None:
 )
 async def wait_postgres(
     logger: structlog.typing.FilteringBoundLogger,
-    host: str,
-    port: int,
-    user: str,
-    password: str,
-    database: str,
+    dsn: str,
 ) -> asyncpg.Pool:
     db_pool = await asyncpg.create_pool(
-        host=host,
-        port=port,
-        user=user,
-        password=password,
-        database=database,
+        dsn=dsn,
         min_size=1,
         max_size=3,
     )

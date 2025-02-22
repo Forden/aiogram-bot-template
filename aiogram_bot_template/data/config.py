@@ -1,4 +1,5 @@
 import subprocess  # noqa: S404
+from urllib import parse
 
 from environs import Env
 
@@ -16,11 +17,34 @@ BOT_ID: str = BOT_TOKEN.split(":")[0]
 
 LOGGING_LEVEL: int = env.int("LOGGING_LEVEL", 10)
 
-PG_HOST: str = env.str("PG_HOST")
-PG_PORT: int = env.int("PG_PORT")
-PG_USER: str = env.str("PG_USER")
-PG_PASSWORD: str = env.str("PG_PASSWORD")
-PG_DATABASE: str = env.str("PG_DATABASE")
+USE_PG_LINK: bool = env.bool("USE_PG_LINK", False)
+
+if USE_PG_LINK:
+    PG_LINK: str = env.str("PG_LINK")
+else:
+    PG_HOST: str = env.str("PG_HOST")
+    PG_PORT: int = env.int("PG_PORT")
+    PG_USER: str = env.str("PG_USER")
+    PG_PASSWORD: str = env.str("PG_PASSWORD")
+    PG_DATABASE: str = env.str("PG_DATABASE")
+    PG_SSL: str = env.str("PG_SSL", "require")
+    PG_LINK = parse.urlunsplit(
+        (
+            "postgresql",
+            f"{PG_HOST}:{PG_PORT}",
+            "",
+            parse.urlencode(
+                query={
+                    "user": PG_USER,
+                    "password": PG_PASSWORD,
+                    "sslmode": PG_SSL,
+                    "database": PG_DATABASE,
+                },
+                doseq=True,
+            ),
+            "",
+        ),
+    )
 
 FSM_HOST: str = env.str("FSM_HOST")
 FSM_PORT: int = env.int("FSM_PORT")
