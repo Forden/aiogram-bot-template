@@ -46,9 +46,10 @@ class DefaultConstructor:
     max_possible_properties = len(required_properties) + max_additional_properties
 
     @staticmethod
-    def _create_kb(
+    def _create_kb(  # noqa: PLR0913
         actions: Sequence[POSSIBLE_INPUT_ACTIONS_TYPES],
         schema: Sequence[int],
+        *,
         resize_keyboard: bool = True,
         selective: bool = False,
         one_time_keyboard: bool = False,
@@ -91,7 +92,7 @@ class DefaultConstructor:
             else:
                 msg = "unknown action type"
                 raise TypeError(msg)
-            btns.append(KeyboardButton(**data))  # type: ignore
+            btns.append(KeyboardButton(**data))  # type:ignore[arg-type]
         kb = ReplyKeyboardMarkup(
             resize_keyboard=resize_keyboard,
             selective=selective,

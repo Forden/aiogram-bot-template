@@ -21,6 +21,7 @@ class PostgresConnection(BaseConnection):
         self,
         connection_poll: asyncpg.Pool,
         logger: structlog.typing.FilteringBoundLogger,
+        *,
         decode_json: bool = False,
     ) -> None:
         self._pool = connection_poll

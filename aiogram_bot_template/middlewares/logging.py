@@ -20,7 +20,7 @@ class UpdateLoggingContextManager:
         self.event = event
         self.logger = logger.bind(update_id=self.event.update_id)
 
-    def _fill_logger(self) -> None:
+    def _fill_logger(self) -> None:  # noqa: PLR0915,PLR0912,C901
         if self.event.callback_query:
             c = self.event.callback_query
             self.logger = self.logger.bind(
@@ -240,7 +240,11 @@ class StructLoggingMiddleware(BaseMiddleware):
             handler_result = await handler(event, data)
         return handler_result
 
-    def _bind_loggers(self, event: Update, data: dict[str, Any]) -> None:
+    def _bind_loggers(  # noqa: PLR6301
+        self,
+        event: Update,
+        data: dict[str, Any],
+    ) -> None:
         update_id = event.update_id
         for possible_logger_name in [
             "business_logger",

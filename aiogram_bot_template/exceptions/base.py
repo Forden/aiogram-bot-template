@@ -1,13 +1,9 @@
 class BaseAiogramBotTemplateError(Exception):
-    """
-    Base exception for all Aiogram bot template errors
-    """
+    """Base exception for all Aiogram bot template errors"""
 
 
 class DetailedAiogramBotTemplateError(BaseAiogramBotTemplateError):
-    """
-    Base exception for all Aiogram bot template errors with detailed message
-    """
+    """Base exception for all Aiogram bot template errors with detailed message"""
 
     def __init__(self, message: str) -> None:
         self.message = message

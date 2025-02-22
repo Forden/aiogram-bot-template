@@ -35,7 +35,7 @@ async def execute(req: web.Request) -> web.Response:
 
     dp: Dispatcher = req.app["dp"]
     scheduler: aiojobs.Scheduler = req.app["scheduler"]
-    if scheduler.pending_count > 100:
+    if scheduler.pending_count > config.MAX_UPDATES_IN_QUEUE:
         raise web.HTTPTooManyRequests
     if scheduler.closed:
         raise web.HTTPServiceUnavailable(reason="Closed queue")

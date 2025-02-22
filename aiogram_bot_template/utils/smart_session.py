@@ -73,7 +73,7 @@ class SmartAiogramAiohttpSession(StructLogAiogramAiohttpSessions):
             except TelegramRetryAfter as e:
                 await asyncio.sleep(e.retry_after)
             except (RestartingTelegram, TelegramServerError):
-                if attempt > 6:
+                if attempt > 6:  # noqa: PLR2004
                     sleepy_time = 64
                 else:
                     sleepy_time = 2**attempt

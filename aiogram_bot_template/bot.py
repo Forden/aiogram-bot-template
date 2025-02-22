@@ -1,4 +1,5 @@
 import asyncio
+import sys
 from typing import TYPE_CHECKING
 
 import aiojobs
@@ -33,7 +34,7 @@ async def create_db_connections(dp: Dispatcher) -> None:
         )
     except tenacity.RetryError:
         logger.exception("Failed to connect to PostgreSQL", db="main")
-        exit(1)
+        sys.exit(1)
     else:
         logger.debug("Succesfully connected to PostgreSQL", db="main")
     dp["db_pool"] = db_pool
@@ -50,7 +51,7 @@ async def create_db_connections(dp: Dispatcher) -> None:
             )
         except tenacity.RetryError:
             logger.exception("Failed to connect to Redis")
-            exit(1)
+            sys.exit(1)
         else:
             logger.debug("Succesfully connected to Redis")
         dp["cache_pool"] = redis_pool

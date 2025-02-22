@@ -42,13 +42,8 @@ target-version = "py310"
 preview = true
 
 [tool.ruff.lint]
-select = [
-    "E", "F", "B", "UP", "SIM", "N", "YTT", "ANN", "ASYNC", "S", "A", "COM", "C4",
-    "DTZ", "T10", "EM", "FA", "ISC", "ICN", "G", "INP", "PIE", "T20", "PYI", "PT", "Q",
-    "RSE", "RET", "SLF", "SLOT", "TID", "TCH", "INT", "ARG", "PTH", "TD", "FIX", "ERA",
-    "PLC", "PLE", "PLW", "TRY", "FLY", "NPY", "AIR", "PERF", "FURB", "LOG", "RUF"
-]
-ignore = ["E501", "ANN101", "ANN401", "RET504", "PLC0414", "SIM108"]
+select = ["ALL"]
+ignore = ["E501", "ANN401", "RET504", "PLC0414", "SIM108", "D", "I", "CPY001"]
 unfixable = ["B"]
 
 [tool.ruff.format]

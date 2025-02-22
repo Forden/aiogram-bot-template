@@ -1,5 +1,4 @@
 from types import MappingProxyType
-from typing import TypeVar
 
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import (
@@ -13,8 +12,6 @@ from aiogram.types import (
 
 from aiogram_bot_template import exceptions
 from aiogram_bot_template.keyboards.keyboard_utils import schema_generator
-
-A = TypeVar("A", bound=type[CallbackData])
 
 POSSIBLE_BUTTON_PROPERTIES_VALUES = (  # https://core.telegram.org/bots/api#inlinekeyboardbutton
     str
@@ -50,7 +47,7 @@ class InlineConstructor:
     max_possible_properties = len(required_properties) + max_additional_properties
 
     @staticmethod
-    def _create_kb(
+    def _create_kb(  # noqa: C901
         actions: list[POSSIBLE_INPUT_ACTIONS_TYPES],
         schema: list[int],
     ) -> InlineKeyboardMarkup:
@@ -89,7 +86,7 @@ class InlineConstructor:
                 if len(btns) != 0 and data["pay"]:
                     raise exceptions.PaymentButtonMustBeFirstError
                 data["pay"] = cur_action["pay"]
-            btns.append(InlineKeyboardButton(**data))  # type: ignore
+            btns.append(InlineKeyboardButton(**data))  # type:ignore[arg-type]
         kb = InlineKeyboardMarkup(
             inline_keyboard=schema_generator.create_keyboard_layout(btns, schema),
         )

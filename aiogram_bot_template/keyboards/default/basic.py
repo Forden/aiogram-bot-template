@@ -24,6 +24,7 @@ class BasicButtons(DefaultConstructor):
 
     @staticmethod
     def confirmation(
+        *,
         add_back: bool = False,
         add_cancel: bool = False,
     ) -> aiogram.types.ReplyKeyboardMarkup:
@@ -41,6 +42,7 @@ class BasicButtons(DefaultConstructor):
 
     @staticmethod
     def skip(
+        *,
         add_back: bool = False,
         add_cancel: bool = False,
     ) -> aiogram.types.ReplyKeyboardMarkup:
@@ -56,6 +58,7 @@ class BasicButtons(DefaultConstructor):
 
     @staticmethod
     def yes(
+        *,
         add_back: bool = False,
         add_cancel: bool = False,
     ) -> aiogram.types.ReplyKeyboardMarkup:
@@ -71,6 +74,7 @@ class BasicButtons(DefaultConstructor):
 
     @staticmethod
     def no(
+        *,
         add_back: bool = False,
         add_cancel: bool = False,
     ) -> aiogram.types.ReplyKeyboardMarkup:
@@ -86,6 +90,7 @@ class BasicButtons(DefaultConstructor):
 
     @staticmethod
     def yes_n_no(
+        *,
         add_back: bool = False,
         add_cancel: bool = False,
     ) -> aiogram.types.ReplyKeyboardMarkup:
@@ -100,8 +105,9 @@ class BasicButtons(DefaultConstructor):
         return BasicButtons._create_kb(btns, schema)
 
     @staticmethod
-    def ask_for_users(
+    def ask_for_users(  # noqa: PLR0913
         text: str,
+        *,
         request_id: int = 1,
         user_is_bot: bool | None = False,
         user_is_premium: bool | None = None,
