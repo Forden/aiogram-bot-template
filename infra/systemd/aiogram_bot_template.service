@@ -1,13 +1,33 @@
 [Unit]
 Description=Aiogram bot
-After=network.target
+After=network-online.target
+Wants=systemd-networkd-wait-online.service
 
 [Service]
-User=root
-Group=root
+DevicePolicy=closed
+DynamicUser=true
+LockPersonality=true
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=noaccess
+ProtectSystem=strict
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+NoNewPrivileges=true
+PrivateTmp=true
+
+AmbientCapabilities=CAP_IPC_LOCK
+
 Type=simple
 WorkingDirectory=/opt/aiogram-bot-template
-ExecStart=/root/.local/bin/poetry run aiogram_bot_template
+ExecStart=/usr/bin/poetry run aiogram_bot_template
 EnvironmentFile=/opt/aiogram-bot-template/.env
 Restart=always
 
