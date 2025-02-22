@@ -13,7 +13,7 @@ class SingleQueryResult:
         return self._data
 
     def convert(self, model: type[T]) -> T | None:
-        return model(**self.data) if self._data else None
+        return model(**self.data) if self.data else None
 
 
 class MultipleQueryResults:
@@ -25,7 +25,7 @@ class MultipleQueryResults:
         return self._data
 
     def convert(self, model: type[T]) -> list[T]:
-        return [model(**i) for i in self._data]
+        return [model(**i) for i in self.data]
 
 
 class BaseConnection:
