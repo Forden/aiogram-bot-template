@@ -31,17 +31,17 @@ poetry-plugin-export = ">=1.8"
 [tool.poetry.dependencies]
 python = "^3.10"
 aiogram = "^3"
-environs = "~14"
-redis = "~5.2"
+environs = "^14"
+redis = "^5"
 asyncpg = "0.30.0"
-pydantic = "~2"
+pydantic = "^2"
 structlog = "25.1.0"
 aiojobs = "^1"
-orjson = "~3.10"
+orjson = "^3.10"
 tenacity = "^9"
 pytz = "^2025"
 aiohttp = "~3"
-arrow = "^1.3.0"
+arrow = "^1"
 
 [tool.poetry.group.dev]
 optional = true
@@ -49,13 +49,12 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.9.0"
 black = { extras = ["d"], version = "^25" }
-ruff = "^0.9.7"
-types-redis = "^4.5.5.2"
+ruff = "^0.9"
 isort = "~6"
 types-pytz = "^2025"
-types-cachetools = "^5.3.0.7"
+#types-cachetools = "^5.3.0.7"
 deptry = "0.23.0"
-pip-audit = "^2.8.0"
+pip-audit = "^2"
 
 [tool.black]
 target-version = ["py310"]

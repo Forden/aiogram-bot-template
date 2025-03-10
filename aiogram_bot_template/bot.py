@@ -45,6 +45,7 @@ async def create_db_connections(dp: Dispatcher) -> None:
             redis_pool = await utils.connect_to_services.wait_redis_pool(
                 logger=dp["cache_logger"],
                 host=config.CACHE_HOST,
+                username=config.CACHE_USERNAME,
                 password=config.CACHE_PASSWORD,
                 port=config.CACHE_PORT,
                 database=0,
@@ -83,8 +84,8 @@ async def close_db_connections(dp: Dispatcher) -> None:
         db_pool: asyncpg.Pool = dp["db_pool"]
         await db_pool.close()
     if "cache_pool" in dp.workflow_data:
-        cache_pool: redis.asyncio.Redis = dp["cache_pool"]  # type: ignore[type-arg]
-        await cache_pool.close()
+        cache_pool: redis.Redis = dp["cache_pool"]
+        await cache_pool.close()  # type: ignore[no-untyped-call]
 
 
 def setup_handlers(dp: Dispatcher) -> None:

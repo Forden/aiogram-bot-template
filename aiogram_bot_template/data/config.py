@@ -55,6 +55,7 @@ USE_CACHE: bool = env.bool("USE_CACHE", False)
 if USE_CACHE:
     CACHE_HOST: str = env.str("CACHE_HOST")
     CACHE_PORT: int = env.int("CACHE_PORT")
+    CACHE_USERNAME: str = env.str("CACHE_USERNAME")
     CACHE_PASSWORD: str = env.str("CACHE_PASSWORD")
 
 USE_WEBHOOK: bool = env.bool("USE_WEBHOOK", False)
