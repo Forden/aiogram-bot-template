@@ -52,7 +52,6 @@ black = { extras = ["d"], version = "^25" }
 ruff = "^0.9"
 isort = "~6"
 types-pytz = "^2025"
-#types-cachetools = "^5.3.0.7"
 deptry = "0.23.0"
 pip-audit = "^2"
 
@@ -69,13 +68,11 @@ group_by_package = true
 python_version = "3.10"
 files = "bot.py"
 plugins = "pydantic.mypy"
-show_error_codes = true
-show_error_context = true
-pretty = true
-ignore_missing_imports = false
 warn_unused_configs = true
-disallow_subclassing_any = true
+ignore_missing_imports = false
+follow_imports_for_stubs = true
 disallow_any_generics = true
+disallow_subclassing_any = true
 disallow_untyped_calls = true
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
@@ -85,15 +82,21 @@ no_implicit_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_return_any = true
-follow_imports_for_stubs = true
+warn_unreachable = true
+strict_equality = true
+strict_bytes = true
+extra_checks = true
+show_error_context = true
+show_error_code_links = true
+show_error_end = true
+show_error_codes = true
+pretty = true
 namespace_packages = true
 show_absolute_path = true
-
 
 [[tool.mypy.overrides]]
 module = "asyncpg.*"
 ignore_missing_imports = true
-
 
 [tool.ruff]
 target-version = "py310"
@@ -101,7 +104,16 @@ preview = true
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["E501", "ANN401", "RET504", "PLC0414", "SIM108", "D", "I", "CPY001"]
+ignore = [
+    "E501", # line too long, controlled by black
+    "ANN401", # attempt to replace mypy, ignored in favor of mypy
+    "RET504", # opinionated
+    "PLC0414", # breaks mypy unused imports
+    "SIM108", # forces to use ternary operator
+    "D", # unnecessary
+    "I", # unnecessary
+    "CPY001"# unnecessary
+]
 unfixable = ["B"]
 
 [tool.ruff.format]

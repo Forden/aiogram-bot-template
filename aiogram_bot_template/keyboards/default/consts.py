@@ -90,8 +90,7 @@ class DefaultConstructor:
                         required_args=DefaultConstructor.required_properties,
                     )
             else:
-                msg = "unknown action type"
-                raise TypeError(msg)
+                raise TypeError("unknown action type")  # noqa: TRY003, EM101
             btns.append(KeyboardButton(**data))  # type:ignore[arg-type]
         kb = ReplyKeyboardMarkup(
             resize_keyboard=resize_keyboard,

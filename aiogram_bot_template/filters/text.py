@@ -15,4 +15,4 @@ class TextFilter(BaseFilter):
             return any(i == txt for i in self.text)
         if isinstance(obj, CallbackQuery):
             return obj.data in self.text
-        return False
+        return False  # type: ignore[unreachable]
