@@ -4,7 +4,7 @@ from urllib import parse
 from environs import Env
 
 VERSION = (
-    subprocess.check_output(["git", "describe", "--always"])  # noqa: S603,S607
+    subprocess.check_output(["git", "describe", "--always"])  # noqa: S607
     .strip()
     .decode()
 )

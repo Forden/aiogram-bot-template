@@ -17,8 +17,7 @@ from aiogram_bot_template.data import config
 from aiogram_bot_template.middlewares import StructLoggingMiddleware
 
 if TYPE_CHECKING:
-    import asyncpg as asyncpg
-    import redis
+    import asyncpg
     import structlog
     from aiogram.client.session.aiohttp import AiohttpSession
 
@@ -84,8 +83,8 @@ async def close_db_connections(dp: Dispatcher) -> None:
         db_pool: asyncpg.Pool = dp["db_pool"]
         await db_pool.close()
     if "cache_pool" in dp.workflow_data:
-        cache_pool: redis.Redis = dp["cache_pool"]
-        await cache_pool.close()  # type: ignore[no-untyped-call]
+        cache_pool: Redis = dp["cache_pool"]
+        await cache_pool.close()
 
 
 def setup_handlers(dp: Dispatcher) -> None:
